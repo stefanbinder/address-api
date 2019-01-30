@@ -1,0 +1,5 @@
+create database address;
+CREATE USER 'user_address'@'localhost' IDENTIFIED BY 'user_address_pw';
+CREATE USER 'user_address'@'%' IDENTIFIED BY 'user_address_pw';
+GRANT ALL PRIVILEGES ON address.* TO 'user_address'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON address.* TO 'user_address'@'%' WITH GRANT OPTION;

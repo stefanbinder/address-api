@@ -1,0 +1,52 @@
+
+
+php artisan generate
+
+name: Country
+fields: (allowed field-types: https://laravel.com/docs/5.7/migrations#columns)
+    id:Int
+    name:String
+    population:Int
+    languages:Language[]
+Auth:
+    Gate:
+        IsAdmin
+    Policy:
+
+
+name: State
+fields:
+    id:Int
+    name:String
+    country:Country
+Auth:
+    Gate:
+        IsAdmin
+    Policy:
+
+
+name: City
+fields:
+    id:Int
+    name:String
+    state:State
+
+
+
+name: Address
+fields:
+    id:Int
+    street:String
+    number:Int
+    flat:Int
+    city:City
+    user:User
+Auth:
+    Gate:
+    Policy:
+        update:ifOwn
+
+
+
+
+

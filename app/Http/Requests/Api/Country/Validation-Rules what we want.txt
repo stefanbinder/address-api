@@ -1,0 +1,74 @@
+accepted
+The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
+
+alpha
+The field under validation must be entirely alphabetic characters.
+
+alpha_dash
+The field under validation may have alpha-numeric characters, as well as dashes and underscores.
+
+alpha_num
+The field under validation must be entirely alpha-numeric characters.
+
+array
+The field under validation must be a PHP array.
+
+between:min,max
+The field under validation must have a size between the given min and max. Strings, numerics, arrays, and files are evaluated in the same fashion as the size rule.
+
+boolean
+The field under validation must be able to be cast as a boolean. Accepted input are  true, false, 1, 0, "1", and "0".
+
+date
+The field under validation must be a valid, non-relative date according to the  strtotime PHP function.
+
+digits:value
+The field under validation must be numeric and must have an exact length of value.
+
+digits_between:min,max
+The field under validation must have a length between the given min and max.
+
+email
+The field under validation must be formatted as an e-mail address.
+
+exists:table,column
+The field under validation must exist on a given database table.
+
+file
+The field under validation must be a successfully uploaded file.
+
+integer
+The field under validation must be an integer. (2, 256, 2048, ...)
+
+max:value
+The field under validation must be less than or equal to a maximum value. Strings, numerics, arrays, and files are evaluated in the same fashion as the size rule.
+
+min:value
+The field under validation must have a minimum value. Strings, numerics, arrays, and files are evaluated in the same fashion as the size rule.
+
+nullable
+The field under validation may be null. This is particularly useful when validating primitive such as strings and integers that can contain null values.
+
+numeric
+The field under validation must be numeric. (2.382, +1234.23e9, ...)
+
+required
+The field under validation must be present in the input data and not empty. A field is considered "empty" if one of the following conditions are true:
+
+size:value
+The field under validation must have a size matching the given value. For string data, value corresponds to the number of characters. For numeric data, value corresponds to a given integer value. For an array, size corresponds to the count of the array. For files, size corresponds to the file size in kilobytes.
+
+starts_with:foo,bar,...
+The field under validation must start with one of the given values.
+
+string
+The field under validation must be a string. If you would like to allow the field to also be null, you should assign the nullable rule to the field.
+
+unique:table,column,except,idColumn
+The field under validation must be unique in a given database table. If the column option is not specified, the field name will be used.
+
+url
+The field under validation must be a valid URL.
+
+uuid
+The field under validation must be a valid RFC 4122 (version 1, 3, 4, or 5) universally unique identifier (UUID).
