@@ -25,8 +25,7 @@ class StateStoreRequest extends ApiRequest
     public function rules()
     {
         return [
-            'data'                          => 'required',
-            'data.types'                    => 'countries',
+            'data.types'                    => 'required',
             'data.attributes.name'          => 'required|string|nullable',
             'data.attributes.code2'         => [
                 'required',

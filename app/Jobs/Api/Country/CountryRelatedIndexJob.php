@@ -29,12 +29,13 @@ class CountryRelatedIndexJob extends RelatedIndexJob
         data_set($data, 'filter.country_id', $this->model->id);
         $states = StateIndexJob::dispatchNow($data);
 
-        return new StatesResource($states);
+        return $states;
+//        return new StatesResource($states);
     }
 
-    public function president()
-    {
-        return new PersonResource($this->model->president);
-    }
+//    public function president()
+//    {
+//        return new PersonResource($this->model->president);
+//    }
 
 }
