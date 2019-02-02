@@ -36,9 +36,9 @@ class ApiRequestFactory
     {
 
         switch($resourceIdentifier) {
-            case 'countries': return self::make(CountryIndexRequest::class);
-            case 'states': return self::make(StateIndexRequest::class);
-            case 'people': return self::make(PersonIndexRequest::class);
+            case 'countries': return CountryIndexRequest::class;
+            case 'states': return StateIndexRequest::class;
+            case 'people': return PersonIndexRequest::class;
             default:
                 throw new \Exception("IndexRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -54,9 +54,9 @@ class ApiRequestFactory
     {
 
         switch($resourceIdentifier) {
-            case 'countries': return self::make(CountryShowRequest::class);
-            case 'states': return self::make(StateShowRequest::class);
-            case 'people': return self::make(PersonShowRequest::class);
+            case 'countries': return CountryShowRequest::class;
+            case 'states': return StateShowRequest::class;
+            case 'people': return PersonShowRequest::class;
             default:
                 throw new \Exception("ShowRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -72,9 +72,9 @@ class ApiRequestFactory
     {
 
         switch($resourceIdentifier) {
-            case 'countries': return self::make(CountryStoreRequest::class);
-            case 'states': return self::make(StateStoreRequest::class);
-            case 'people': return self::make(PersonStoreRequest::class);
+            case 'countries': return CountryStoreRequest::class;
+            case 'states': return StateStoreRequest::class;
+            case 'people': return PersonStoreRequest::class;
             default:
                 throw new \Exception("StoreRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -90,9 +90,9 @@ class ApiRequestFactory
     {
 
         switch($resourceIdentifier) {
-            case 'countries': return self::make(CountryUpdateRequest::class);
-            case 'states': return self::make(StateUpdateRequest::class);
-            case 'people': return self::make(PersonUpdateRequest::class);
+            case 'countries': return CountryUpdateRequest::class;
+            case 'states': return StateUpdateRequest::class;
+            case 'people': return PersonUpdateRequest::class;
             default:
                 throw new \Exception("UpdateRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -108,9 +108,9 @@ class ApiRequestFactory
     {
 
         switch($resourceIdentifier) {
-            case 'countries': return self::make(CountryDestroyRequest::class);
-            case 'states': return self::make(StateDestroyRequest::class);
-            case 'people': return self::make(PersonDestroyRequest::class);
+            case 'countries': return CountryDestroyRequest::class;
+            case 'states': return StateDestroyRequest::class;
+            case 'people': return PersonDestroyRequest::class;
             default:
                 throw new \Exception("DestroyRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }

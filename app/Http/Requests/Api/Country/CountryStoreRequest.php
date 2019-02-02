@@ -29,11 +29,6 @@ class CountryStoreRequest extends ApiRequest
             'data.type'                    => 'required',
             'data.attributes.name'         => 'required|string',
             'data.attributes.code'         => 'required',
-//            'data.attributes.code'         => [
-//                'required',
-//                'size:2',
-//                'unique:countries,code',
-//            ],
             'data.attributes.inhabitants'  => '',
             'data.attributes.founded_at'   => '',
             'data.attributes.some_time'    => '',

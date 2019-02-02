@@ -6,11 +6,13 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\Country\CountryIndexRequest;
 use App\Http\Requests\Api\Country\CountryShowRequest;
 use App\Http\Requests\Api\Country\CountryStoreRequest;
+use App\Http\Requests\Api\Country\CountryUpdateRequest;
 use App\Http\Resources\Country\CountriesResource;
 use App\Http\Resources\Country\CountryResource;
 use App\Http\Resources\ResourceFactory;
 use App\Jobs\Api\Country\CountryIndexJob;
 use App\Jobs\Api\Country\CountryStoreJob;
+use App\Jobs\Api\Country\CountryUpdateJob;
 use App\Models\Address\Country;
 
 class CountryController extends ApiController
@@ -38,14 +40,15 @@ class CountryController extends ApiController
 
         return $this->response($resource);
     }
-//
-//    public function update(CountryUpdateRequest $request, Country $country)
-//    {
-//        $data = $request->validated();
-//        $country = CountryUpdateCommand::update($data);
-////        $country->update($data['data']['attributes']);
-//        return new CountryResource($country);
-//    }
+
+    public function update(CountryUpdateRequest $request, Country $country)
+    {
+        $data = $request->validated();
+        $country = CountryUpdateJob::dispatchNow($country, $data);
+        $resource = ResourceFactory::resourceObject("country", $country);
+
+        return $this->response($resource);
+    }
 //
 //    public function destroy(CountryDestroyRequest $request, Country $country)
 //    {

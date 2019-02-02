@@ -20,4 +20,4 @@ Homestead.json
 .rocketeer/
 
 # PhpStorm
-.idea/*
+.idea
