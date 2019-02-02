@@ -59,6 +59,12 @@ abstract class StoreJob implements ShouldQueue
      */
     abstract protected function getEloquent();
 
+    /**
+     * Returns the stored ApiModel
+     *
+     * @return ApiModel|null
+     * @throws \Exception
+     */
     public function process()
     {
         $resourceObject = $this->request_data['data'];
@@ -71,12 +77,10 @@ abstract class StoreJob implements ShouldQueue
         $attributes = $this->processAttributes($resourceObject['attributes']);
         $model      = $this->model::create($attributes);
 
-        $this->processRelationships($model, $resourceObject['relationships']);
-
-        // TODO: maybe collect exceptions and return as error-arrays
-//        try {
-//        } catch (\Exception $e) {
-//        }
+        if( array_key_exists('relationships', $resourceObject) ) {
+            $this->processRelationships($model, $resourceObject['relationships']);
+            // TODO: maybe collect exceptions and return as error-arrays
+        }
 
         $model->save();
 

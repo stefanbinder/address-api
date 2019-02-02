@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Country;
 
-
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\Country\CountryIndexRequest;
 use App\Jobs\Api\RelationshipIndexJob;

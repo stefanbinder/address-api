@@ -30,8 +30,7 @@ abstract class ApiRequest extends FormRequest
         $errorResponse = [];
 
         $errorResponse['errors'] = $this->prepareErrors($validator->errors());
-        $errorResponse['id'] = 'FUTURE-FEATURE';
-        $errorResponse['links'] = 'FUTURE-FEATURE';
+
         // TODO: Implementing all possible error-information of jsonapi.org
         // https://jsonapi.org/format/#error-objects
 

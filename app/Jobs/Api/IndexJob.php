@@ -54,6 +54,10 @@ abstract class IndexJob implements ShouldQueue
      */
     abstract protected function getEloquent();
 
+    /**
+     * Returns the paginated list after filtering and ordering
+     *
+     */
     public function process()
     {
         // Query-Builder Part
