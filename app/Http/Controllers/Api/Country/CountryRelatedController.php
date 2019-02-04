@@ -42,5 +42,13 @@ class CountryRelatedController extends ApiController
         return $this->response($resource);
     }
 
+    public function update(Request $request, Country $country, $related, $id)
+    {
+
+        $relative = CountryRelatedUpdateJob::dispatchNow($request->all(), $country, $related);
+        $resource = ResourceFactory::resourceObject($relative::ID, $relative);
+        return $this->response($resource);
+    }
+
 
 }
