@@ -25,7 +25,7 @@ class StateUpdateRequest extends ApiRequest
     {
         return [
             'data.type'            => 'required',
-            'data.attributes.name' => 'required|string|nullable',
+            'data.attributes.name' => 'required|string',
         ];
     }
 }

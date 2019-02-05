@@ -10,8 +10,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-abstract class UpdateJob implements ShouldQueue
+abstract class DestroyJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -19,17 +20,15 @@ abstract class UpdateJob implements ShouldQueue
      * @var ApiModel
      */
     protected $model;
-    protected $request_data;
 
     /**
      * Create a new job instance
      * @param ApiModel $model
      * @param $request_data
      */
-    public function __construct($model, $request_data)
+    public function __construct($model)
     {
         $this->model        = $model;
-        $this->request_data = $request_data;
     }
 
     /**
@@ -42,35 +41,23 @@ abstract class UpdateJob implements ShouldQueue
     /**
      * Returns the stored ApiModel
      *
-     * @return ApiModel|null
+     * @return array
      * @throws \Exception
      */
     public function process()
     {
         $model = $this->model;
-        $resourceObject = $this->request_data['data'];
 
-        if ($this->model::ID !== $resourceObject['type']) {
-            // TODO: Exception Handling
-            throw new \Exception('ModelID does not fit the given type, cannot create resource');
+        if($model && $model->delete()) {
+            return [
+                'meta' => [
+                    'id' => $model->id,
+                    'message' => 'deleted'
+                ]
+            ];
         }
 
-        $attributes = $this->processAttributes($resourceObject['attributes']);
-        $model->update($attributes);
-
-        if( array_key_exists('relationships', $resourceObject) ) {
-            $errors = ProcessRelations::processRelationships($model, $resourceObject['relationships']);
-
-            // TODO: Exception handling
-            if( $errors ) {
-                throw new ValidationException('Validation errors', $errors);
-            }
-        }
-
-        $model->save();
-
-        return $model;
-
+        throw new NotFoundHttpException('Resource not found');
     }
 
     /**

@@ -3,12 +3,18 @@
 namespace App\Jobs\Api;
 
 
+use App\Jobs\Api\Country\CountryDestroyJob;
 use App\Jobs\Api\Country\CountryIndexJob;
 use App\Jobs\Api\Country\CountryStoreJob;
+use App\Jobs\Api\Country\CountryUpdateJob;
+use App\Jobs\Api\Person\PersonDestroyJob;
 use App\Jobs\Api\Person\PersonIndexJob;
 use App\Jobs\Api\Person\PersonStoreJob;
+use App\Jobs\Api\Person\PersonUpdateJob;
+use App\Jobs\Api\State\StateDestroyJob;
 use App\Jobs\Api\State\StateIndexJob;
 use App\Jobs\Api\State\StateStoreJob;
+use App\Jobs\Api\State\StateUpdateJob;
 use App\Models\ApiModel;
 
 class ApiJobFactory
@@ -71,28 +77,16 @@ class ApiJobFactory
 
     /**
      * @param $resourceIdentifier
-     * @param $data
-     * @return ApiModel
-     * @throws \Exception
-     */
-    public static function storeAndDispatch($resourceIdentifier, $data)
-    {
-        $class = self::store($resourceIdentifier);
-        return $class::dispatchNow($data);
-    }
-
-    /**
-     * @param $resourceIdentifier
-     * @return UpdateJob
+     * @return string
      * @throws \Exception
      */
     public static function update($resourceIdentifier)
     {
 
         switch($resourceIdentifier) {
-            case 'countries': return self::make(CountryUpdateJob::class);
-            case 'states': return self::make(StateUpdateJob::class);
-            case 'people': return self::make(PersonUpdateJob::class);
+            case 'countries': return CountryUpdateJob::class;
+            case 'states': return StateUpdateJob::class;
+            case 'people': return PersonUpdateJob::class;
             default:
                 throw new \Exception("UpdateJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
@@ -101,16 +95,16 @@ class ApiJobFactory
 
     /**
      * @param $resourceIdentifier
-     * @return DestroyJob
+     * @return string
      * @throws \Exception
      */
     public static function destroy($resourceIdentifier)
     {
 
         switch($resourceIdentifier) {
-            case 'countries': return self::make(CountryDestroyJob::class);
-            case 'states': return self::make(StateDestroyJob::class);
-            case 'people': return self::make(PersonDestroyJob::class);
+            case 'countries': return CountryDestroyJob::class;
+            case 'states': return StateDestroyJob::class;
+            case 'people': return PersonDestroyJob::class;
             default:
                 throw new \Exception("DestroyJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }

@@ -91,7 +91,7 @@ class ProcessRelations
                         throw new \Exception('The relationship ' . get_class($relationship) . ' is not handled by backend');
 
                 }
-            } catch(ValidationException $e) {
+            } catch (ValidationException $e) {
                 $validationErrors = array_merge($validationErrors, $e->errors());
             }
 
@@ -116,13 +116,13 @@ class ProcessRelations
      */
     public static function processRelationshipHasOne(ApiModel $model, HasOne $relationship, $resourceData)
     {
-        $relationModel = self::getRelationModel($relationship, $resourceData);
+        $relationModel = self::getAndStoreOrUpdateRelationModel($relationship, $resourceData);
 
-        if( ! $relationModel instanceof MessageBag ) {
+        if (!$relationModel instanceof MessageBag) {
             return $relationModel;
         }
 
-        if( $relationModel instanceof ApiModel ) {
+        if ($relationModel instanceof ApiModel) {
             $relationship->save($relationModel);
         }
 
@@ -149,11 +149,10 @@ class ProcessRelations
      */
     public static function processRelationshipHasMany(ApiModel $model, HasMany $relationship, $resourceData)
     {
+        foreach ($resourceData as $resource) {
+            $relationModel = self::getAndStoreOrUpdateRelationModel($relationship, $resource);
 
-        foreach($resourceData as $resource) {
-            $relationModel = self::getRelationModel($relationship, $resource);
-
-            if( $relationModel ) {
+            if ($relationModel) {
                 $relationship->save($relationModel);
             }
         }
@@ -178,9 +177,9 @@ class ProcessRelations
      */
     public static function processRelationshipBelongsTo(ApiModel $model, BelongsTo $relationship, $resourceData)
     {
-        $relationModel = self::getRelationModel($relationship, $resourceData);
+        $relationModel = self::getAndStoreOrUpdateRelationModel($relationship, $resourceData);
 
-        if( $relationModel ) {
+        if ($relationModel) {
             $relationship->associate($relationModel);
         }
 
@@ -259,9 +258,28 @@ class ProcessRelations
 
 
     /**
-     * HELPER FUNCTIONS
+     * @param Relation $relationship
+     * @param $type
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|null
+     * @throws ResourceObjectTypeError
      */
+    public static function getRelationModel(Relation $relationship, $type, $id)
+    {
+        $relationModelClass = $relationship->getModel();
 
+        if ($type !== $relationModelClass::ID) {
+            throw new ResourceObjectTypeError($type, $relationModelClass::ID);
+        }
+
+        $relationModel = null;
+
+        if ($id) {
+            $relationModel = $relationModelClass::find($id);
+        }
+
+        return $relationModel;
+    }
 
     /**
      * @param Relation $relationship
@@ -270,30 +288,25 @@ class ProcessRelations
      * @throws ResourceObjectTypeError
      * @throws ValidationException
      */
-    public static function getRelationModel(Relation $relationship, $resourceData)
+    public static function getAndStoreOrUpdateRelationModel(Relation $relationship, $resourceData)
     {
+        // TODO: refactor and make method smaller. Break down into:
+        // storeRelationModel
+        // updateRelationModel
+
+        $id   = $resourceData['data']['id'] ?? null;
         $type = $resourceData['data']['type'];
 
-        $relationModelClass = $relationship->getModel();
+        $relationModel = self::getRelationModel($relationship, $type, $id);
 
-        if( $type !== $relationModelClass::ID ) {
-            throw new ResourceObjectTypeError($type, $relationModelClass::ID);
-        }
+        if (array_key_exists('attributes', $resourceData['data'])) {
 
-        $relationModel = null;
+            if ($relationModel) {
 
-        if( array_key_exists('id', $resourceData['data'])) {
-            $relationModel = $relationModelClass::find($resourceData['data']['id']);
-        }
-
-        if( array_key_exists('attributes', $resourceData['data']) ) {
-
-            if( $relationModel ) {
-
-                $request = ApiRequestFactory::update($type);
+                $request   = ApiRequestFactory::update($type);
                 $validator = Validator::make($resourceData, (new $request)->rules());
 
-                if($validator->fails()) {
+                if ($validator->fails()) {
                     throw new ValidationException($validator);
                 }
 
@@ -301,12 +314,14 @@ class ProcessRelations
                 $relationModel->update($validatedData['data']['attributes']);
             } else {
 
-                $request = ApiRequestFactory::store($type);
+                $request   = ApiRequestFactory::store($type);
                 $validator = Validator::make($resourceData, (new $request)->rules());
 
-                if($validator->fails()) {
+                if ($validator->fails()) {
                     throw new ValidationException($validator);
                 }
+
+                $relationModelClass = $relationship->getModel();
 
                 $validatedData = $validator->validate();
                 $relationModel = $relationModelClass::create($validatedData['data']['attributes']);

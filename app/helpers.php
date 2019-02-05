@@ -96,7 +96,7 @@ if (!function_exists('build_basic_api_routes')) {
 
         Illuminate\Support\Facades\Route::put(
             "$snpl/{{$silo}}/{related}/{id}",
-            "Api\\$sica\\${sica}RelatedController@index"
+            "Api\\$sica\\${sica}RelatedController@update"
         )->name("$snpl.related.update");
 
         Illuminate\Support\Facades\Route::delete(

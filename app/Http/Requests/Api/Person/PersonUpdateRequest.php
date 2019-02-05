@@ -24,11 +24,12 @@ class PersonUpdateRequest extends ApiRequest
     public function rules()
     {
         return [
-            'data.id'                     => 'required|exists:people,id',
-            'data.type'                   => 'required',
-            'data.attributes.given_name'  => 'required|string',
-            'data.attributes.family_name' => 'required',
-            'data.attributes.email'       => 'required|email',
+            'data.id'                         => 'required|exists:people,id',
+            'data.type'                       => 'required',
+            'data.attributes.given_name'      => 'required|string',
+            'data.attributes.family_name'     => 'required',
+            'data.attributes.email'           => 'required|email',
+            'data.attributes.additional_name' => '',
         ];
     }
 }

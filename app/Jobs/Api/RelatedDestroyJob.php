@@ -7,6 +7,7 @@ use App\Http\Requests\Api\State\StateStoreRequest;
 use App\Http\Resources\State\StateResource;
 use App\Jobs\Api\State\StateStoreJob;
 use App\Jobs\ProcessingSteps\ProcessRelations;
+use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -18,13 +19,13 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-abstract class RelatedUpdateJob implements ShouldQueue
+abstract class RelatedDestroyJob implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var Model
+     * @var ApiModel
      */
     protected $model;
 
@@ -32,23 +33,20 @@ abstract class RelatedUpdateJob implements ShouldQueue
      * @var string
      */
     protected $related;
-    protected $request_data;
     private   $id;
 
     /**
      * Create a new job instance.
      *
-     * @param $request_data
-     * @param Model $model
+     * @param ApiModel $model
      * @param string $related
      * @param $id
      */
-    public function __construct($request_data, Model $model, $related, $id)
+    public function __construct(ApiModel $model, $related, $id)
     {
-        $this->request_data = $request_data;
-        $this->model        = $model;
-        $this->related      = $related;
-        $this->id           = $id;
+        $this->model   = $model;
+        $this->related = $related;
+        $this->id      = $id;
     }
 
     /**
@@ -66,9 +64,11 @@ abstract class RelatedUpdateJob implements ShouldQueue
     {
         $related = $this->related;
 
-        $relatedModel = ProcessRelations::getAndStoreOrUpdateRelationModel($this->model->$related(), $this->request_data);
+        $relationship = $this->model->$related();
+        $relatedModel = ProcessRelations::getRelationModel($relationship, $related, $this->id);
+        $destroyJob   = ApiJobFactory::destroy($related);
 
-        return $relatedModel;
+        return $destroyJob::dispatchNow($relatedModel);
     }
 
 }
