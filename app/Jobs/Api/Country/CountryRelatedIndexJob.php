@@ -3,6 +3,7 @@
 namespace App\Jobs\Api\Country;
 
 use App\Http\Resources\Person\PersonResource;
+use App\Http\Resources\State\StateResource;
 use App\Http\Resources\State\StatesResource;
 use App\Jobs\Api\RelatedIndexJob;
 use App\Jobs\Api\State\StateIndexJob;
@@ -20,17 +21,6 @@ class CountryRelatedIndexJob extends RelatedIndexJob
     public function handle()
     {
         return $this->process();
-    }
-
-    public function states()
-    {
-        $data = $this->request_data;
-
-        data_set($data, 'filter.country_id', $this->model->id);
-        $states = StateIndexJob::dispatchNow($data);
-
-        return $states;
-//        return new StatesResource($states);
     }
 
 //    public function president()

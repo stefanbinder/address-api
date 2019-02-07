@@ -92,3 +92,32 @@ Multiple filter can be applied for one attribute:
 /api/countries?filter[created_at][lt]=2019-01-01
 ```
 
+# General inclusions or restrictions
+
+## Include
+With the parameter ```include``` you can embed related resources to your main-object.
+The ```include``` takes a comma-separated list of relations.
+
+Simple example:
+```
+/api/countries?include=states,president
+```
+
+For retrieving sub-relations you can send includes as array
+```
+/api/countries?
+  include[countries]=states&
+  include[states]=districts
+```
+
+You can use the ```include``` on each endpoint:
+```
+/api/countries/1?include=states
+/api/countries/1/states?include=districts
+POST /api/countries?include=states {...}
+PUT  /api/countries/1?include=districts {...}
+```
+
+## Fields
+
+

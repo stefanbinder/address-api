@@ -26,7 +26,6 @@ class CountryResource extends ResourceObject
             'code',
             'inhabitants',
             'founded_at',
-            'some_time',
             'last_visited',
             'created_at',
             'updated_at',

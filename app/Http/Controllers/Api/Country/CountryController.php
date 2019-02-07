@@ -8,8 +8,6 @@ use App\Http\Requests\Api\Country\CountryIndexRequest;
 use App\Http\Requests\Api\Country\CountryShowRequest;
 use App\Http\Requests\Api\Country\CountryStoreRequest;
 use App\Http\Requests\Api\Country\CountryUpdateRequest;
-use App\Http\Resources\Country\CountriesResource;
-use App\Http\Resources\Country\CountryResource;
 use App\Http\Resources\ResourceFactory;
 use App\Jobs\Api\Country\CountryDestroyJob;
 use App\Jobs\Api\Country\CountryIndexJob;
@@ -24,7 +22,6 @@ class CountryController extends ApiController
     {
         $countries = CountryIndexJob::dispatchNow($request->all());
         $resource  = ResourceFactory::resourceCollection("countries", $countries);
-
         return $this->response($resource);
     }
 

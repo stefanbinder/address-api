@@ -23,4 +23,5 @@ class StateIndexJob extends IndexJob
     {
         return State::class;
     }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\TransformIncludeAndFieldsParams;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,6 +41,8 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
+            \Barryvdh\Cors\HandleCors::class,
+            TransformIncludeAndFieldsParams::class,
         ],
     ];
 

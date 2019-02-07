@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Api;
 
+use App\Jobs\ProcessingSteps\EagerLoading;
 use App\Jobs\ProcessingSteps\Filter;
 use App\Jobs\ProcessingSteps\Ordering;
 use App\Jobs\ProcessingSteps\Paginate;
@@ -63,6 +64,7 @@ abstract class IndexJob implements ShouldQueue
         // Query-Builder Part
         $query = $this->model::query();
 
+        $query = EagerLoading::loading($query, $this->model::ID);
         $query = Ordering::order($query, data_get($this->request_data, 'sort', self::DEFAULT_SORT_STRING));
 
         $filterable = $this->model::FILTERABLE ?? [];

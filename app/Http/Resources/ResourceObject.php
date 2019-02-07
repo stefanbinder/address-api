@@ -4,17 +4,41 @@ namespace App\Http\Resources;
 
 use App\Http\Resources\Person\PersonResource;
 use App\Http\Resources\State\StateResource;
+use App\Http\Resources\State\StatesResource;
+use App\Jobs\Api\ApiJobFactory;
+use App\Jobs\Api\Country\CountryRelatedIndexJob;
 use App\Jobs\Api\RelationshipIndexJob;
+use App\Jobs\Api\State\StateIndexJob;
+use App\Models\Address\State;
 use App\Models\ApiModel;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 abstract class ResourceObject extends JsonResource
 {
 
-    const DEFAULT_EMBEDS = ['links', 'attributes', 'relationships', 'includes', 'meta'];
+    public const EMBED_LINKS = 'links';
+    public const EMBED_ATTRIBUTES = 'attributes';
+    public const EMBED_RELATIONSHIPS = 'relationships';
+    public const EMBED_INCLUDES = 'includes';
+    public const EMBED_META = 'meta';
+
+    public const DEFAULT_INDEX_EMBEDS = [
+        self::EMBED_LINKS,
+        self::EMBED_ATTRIBUTES,
+        self::EMBED_INCLUDES,
+    ];
+
+    public const DEFAULT_EMBEDS = [
+        self::EMBED_LINKS,
+        self::EMBED_ATTRIBUTES,
+        self::EMBED_RELATIONSHIPS,
+        self::EMBED_INCLUDES,
+        self::EMBED_META,
+    ];
 
     /**
      * @var ApiModel
@@ -34,7 +58,7 @@ abstract class ResourceObject extends JsonResource
     /**
      * @var array
      */
-    private $embed;
+    protected $embed;
 
     /**
      * ResourceObject constructor.
@@ -89,6 +113,7 @@ abstract class ResourceObject extends JsonResource
      *
      * @param  \Illuminate\Http\Request $request
      * @return array
+     * @throws \Exception
      */
     public function toArray($request)
     {
@@ -105,19 +130,19 @@ abstract class ResourceObject extends JsonResource
             'type' => $this->model_name_plural,
         ];
 
-        if (in_array('links', $this->embed)) {
+        if (in_array(self::EMBED_LINKS, $this->embed)) {
             $resource_object['links'] = $this->build_links();
         }
-        if (in_array('attributes', $this->embed)) {
+        if (in_array(self::EMBED_ATTRIBUTES, $this->embed)) {
             $resource_object['attributes'] = $this->build_attributes($request);
         }
-        if (in_array('relationships', $this->embed)) {
+        if (in_array(self::EMBED_RELATIONSHIPS, $this->embed)) {
             $resource_object['relationships'] = $this->build_relationships();
         }
-        if (in_array('includes', $this->embed)) {
+        if (in_array(self::EMBED_INCLUDES, $this->embed)) {
             $resource_object['includes'] = $this->build_includes($request);
         }
-        if (in_array('meta', $this->embed)) {
+        if (in_array(self::EMBED_META, $this->embed)) {
             $resource_object['meta'] = $this->build_meta($request);
         }
 
@@ -135,41 +160,66 @@ abstract class ResourceObject extends JsonResource
         return $relationships;
     }
 
+
+    /**
+     * Get include-param from Request and include all resources into the ResourceObject
+     *
+     * @param $request
+     * @return array
+     * @throws \Exception
+     */
     protected function build_includes($request)
     {
         $include_data = [];
 
-        $include_param = $request->input('include', '');
-        $includes      = explode(',', $include_param);
+        // See TransformIncludeAndFieldsParams Middleware, there include is prepared and manipulated
+        $include_param = $request->input('include', []);
+
+        if( !array_key_exists($this->model::ID, $include_param) ) {
+            return $include_data;
+        }
+
+        $includes = explode(",", $include_param[$this->model::ID]);
 
         foreach ($includes as $include) {
-            if (in_array($include, $this->get_relationships())) {
-                $to_include = $this->get_relationship($include, []);
 
-                if($to_include instanceof ResourceCollection) {
-                    $to_include = $to_include->toArray($request);
-                }
+            $relatedIndexJob = ApiJobFactory::relatedIndex($this->model::ID);
+            $to_include = $relatedIndexJob::dispatchNow([], $this->resource, $include);
 
-                if (is_array($to_include)) {
-                    $include_data = array_merge($include_data, $to_include);
-                } else if( $to_include instanceof Collection) {
-                    $include_data = array_merge($include_data, $to_include->toArray());
-                } else if($to_include) {
-                    array_push($include_data, $to_include);
-                }
-
+            if($to_include instanceof ResourceCollection) {
+                $to_include = $to_include->toArray($request);
             }
+
+            if (is_array($to_include)) {
+                $include_data = array_merge($include_data, $to_include);
+            } else if( $to_include instanceof Collection) {
+                $include_data = array_merge($include_data, $to_include->toArray());
+            } else if($to_include) {
+                array_push($include_data, $to_include);
+            }
+
         }
+
         return $include_data;
     }
 
+    /**
+     * Get either the fields-param from Request or takes the default-fields from extended ResourceObject
+     * Returns just the attributes which are given.
+     *
+     * @param $request
+     * @return array
+     */
     protected function build_attributes($request)
     {
         $attributes = [];
+        $modelId = $this->model::ID;
+
+        // See TransformIncludeAndFieldsParams Middleware, there include is prepared and manipulated
         $fields     = $request->input('fields', []);
 
-        if (array_key_exists($this->model_name_plural, $fields)) {
-            $fields = explode(",", $fields[$this->model_name_plural]);
+        if (array_key_exists($modelId, $fields)) {
+            $fields = explode(",", $fields[$modelId]);
         } else {
             $fields = $this->default_fields;
         }
@@ -180,8 +230,10 @@ abstract class ResourceObject extends JsonResource
                     $attributes[$field] = $this->$field();
                 } else {
                     $attributes[$field] = null;
-                    \Log::warning("Function $field not implemented in resource of " . $this->model_name_plural);
+                    \Log::warning("Attribute '$field' not available in ResourceObject of $modelId");
                 }
+            } else {
+                \Log::warning("Attribute '$field' not whitelisted in ResourceObject of $modelId");
             }
         }
 

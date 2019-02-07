@@ -2,6 +2,8 @@
 
 namespace App\Jobs\Api;
 
+use App\Http\Resources\ResourceFactory;
+use App\Http\Resources\State\StatesResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\SerializesModels;
@@ -53,16 +55,16 @@ abstract class RelatedIndexJob implements ShouldQueue
     {
         $related = $this->related;
 
-        if (method_exists($this, $related)) {
-            return $this->$related();
+        if( ! method_exists($this->model, $related) ) {
+            throw new \Exception('The model "'.get_class($this->model).'" does not have relation "'.$related);
         }
 
-        if( !method_exists($this->model, $related) ) {
-            throw new \Exception('The model does not have relation "'.$related.'" and no function implemented in ' . get_class($this));
-        }
+        $relation = $this->model->$related();
+        $relationModel = $relation->getModel();
 
-        return $this->model->$related;
+        $resource = ResourceFactory::resource($relationModel::ID, $this->model->$related);
 
+        return $resource;
     }
 
 }
