@@ -18,8 +18,8 @@ class StateRelatedController extends ApiController
 
     public function index(StateIndexRequest $request, State $state, $related)
     {
-        $relatives = StateRelatedIndexJob::dispatchNow($request->all(), $state, $related);
-        $resource = ResourceFactory::resource($related, $relatives);
+        // RelatedIndexJob already sends Resource back (single or collection) depending on relationship
+        $resource = StateRelatedIndexJob::dispatchNow($request->all(), $state, $related);
         return $this->response($resource);
     }
 

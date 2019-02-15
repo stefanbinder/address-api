@@ -76,7 +76,7 @@ abstract class RelatedIndexJob implements ShouldQueue
             if($relation instanceof HasOneOrMany) {
                 $filter_key = $relation->getForeignKeyName();
             } else {
-                throw new \Exception('Implement!!! RelatedIndexjob@process');
+                throw new \Exception('Missing Implementation! RelatedIndexjob@process');
             }
 
             // TODO: many to many will be interesting
@@ -92,6 +92,7 @@ abstract class RelatedIndexJob implements ShouldQueue
                     $filter_key => $this->model->id,
                 ]
             ]));
+
             return ResourceFactory::resourceCollection($relationModel::ID, $items);
         }
 

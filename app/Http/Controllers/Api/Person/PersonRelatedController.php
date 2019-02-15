@@ -18,8 +18,8 @@ class PersonRelatedController extends ApiController
 
     public function index(PersonIndexRequest $request, Person $person, $related)
     {
-        $relatives = PersonRelatedIndexJob::dispatchNow($request->all(), $person, $related);
-        $resource = ResourceFactory::resource($related, $relatives);
+        // RelatedIndexJob already sends Resource back (single or collection) depending on relationship
+        $resource = PersonRelatedIndexJob::dispatchNow($request->all(), $person, $related);
         return $this->response($resource);
     }
 
