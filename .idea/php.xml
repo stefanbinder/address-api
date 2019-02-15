@@ -75,6 +75,8 @@
       <path value="$PROJECT_DIR$/vendor/erusev/parsedown" />
       <path value="$PROJECT_DIR$/vendor/fideloper/proxy" />
       <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-cors" />
+      <path value="$PROJECT_DIR$/vendor/asm89/stack-cors" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
