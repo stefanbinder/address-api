@@ -26,7 +26,7 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Validation\ValidationException;
 use Mockery\Exception;
 
-class ProcessRelations
+class RetrieveRelations
 {
 
     /**
@@ -35,63 +35,56 @@ class ProcessRelations
      * Overwrite the method for detailed processing of attributes.
      *
      * @param ApiModel $model
-     * @param $relationships
+     * @param Relation $relationships
      * @return array|null
      * @throws ResourceObjectTypeError
      */
-    public static function processRelationships(ApiModel $model, $relationships)
+    public static function retrieveRelation(ApiModel $model, $relation)
     {
 
-        $validationErrors = [];
+        try {
+            switch (get_class($relation)) {
+                case HasOne::class:
 
-        foreach ($relationships as $relationshipId => $resourceData) {
-            $relationship = $model->$relationshipId();
-            try {
-                switch (get_class($relationship)) {
-                    case HasOne::class:
-                        self::processRelationshipHasOne($model, $relationship, $resourceData);
-                        break;
-                    case HasMany::class:
-                        self::processRelationshipHasMany($model, $relationship, $resourceData);
-                        break;
-                    case BelongsTo::class:
-                        self::processRelationshipBelongsTo($model, $relationship, $resourceData);
-                        break;
-                    case BelongsToMany::class:
-                        self::processRelationshipBelongsToMany($model, $relationship, $resourceData);
-                        break;
-                    case HasManyThrough::class:
-                        self::processRelationshipHasManyThrough($model, $relationship, $resourceData);
-                        break;
-                    case MorphMany::class:
-                        self::processRelationshipMorphMany($model, $relationship, $resourceData);
-                        break;
-                    case MorphOne::class:
-                        self::processRelationshipMorphOne($model, $relationship, $resourceData);
-                        break;
-                    case MorphPivot::class:
-                        self::processRelationshipMorphPivot($model, $relationship, $resourceData);
-                        break;
-                    case MorphTo::class:
-                        self::processRelationshipMorphTo($model, $relationship, $resourceData);
-                        break;
-                    case MorphToMany::class:
-                        self::processRelationshipMorphToMany($model, $relationship, $resourceData);
-                        break;
-                    case Pivot::class:
-                        self::processRelationshipPivot($model, $relationship, $resourceData);
-                        break;
-                    default:
-                        throw new \Exception('The relationship ' . get_class($relationship) . ' is not handled by backend');
+                    break;
+                case HasMany::class:
 
-                }
-            } catch (ValidationException $e) {
-                $validationErrors = array_merge($validationErrors, $e->errors());
+                    break;
+                case BelongsTo::class:
+
+                    break;
+                case BelongsToMany::class:
+
+                    break;
+                case HasManyThrough::class:
+
+                    break;
+                case MorphMany::class:
+
+                    break;
+                case MorphOne::class:
+
+                    break;
+                case MorphPivot::class:
+
+                    break;
+                case MorphTo::class:
+
+                    break;
+                case MorphToMany::class:
+
+                    break;
+                case Pivot::class:
+
+                    break;
+                default:
+                    throw new \Exception('The relationship ' . get_class($relation) . ' is not handled by backend');
+
             }
-
+        } catch (ValidationException $e) {
+            $validationErrors = array_merge($validationErrors, $e->errors());
         }
 
-        return count($validationErrors) > 0 ? $validationErrors : null;
     }
 
     /**

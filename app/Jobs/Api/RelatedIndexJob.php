@@ -3,13 +3,17 @@
 namespace App\Jobs\Api;
 
 use App\Http\Resources\ResourceFactory;
-use App\Http\Resources\State\StatesResource;
+use App\Jobs\Api\State\StateIndexJob;
+use App\Jobs\ProcessingSteps\RetrieveRelations;
+use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Collection;
 
 abstract class RelatedIndexJob implements ShouldQueue
 {
@@ -30,10 +34,10 @@ abstract class RelatedIndexJob implements ShouldQueue
      * Create a new job instance.
      *
      * @param $request_data
-     * @param Model $model
+     * @param ApiModel $model
      * @param string $related
      */
-    public function __construct($request_data, Model $model, $related)
+    public function __construct($request_data, ApiModel $model, $related)
     {
         $this->request_data = $request_data;
         $this->model        = $model;
@@ -61,10 +65,37 @@ abstract class RelatedIndexJob implements ShouldQueue
 
         $relation = $this->model->$related();
         $relationModel = $relation->getModel();
+        $relationObject = $this->model->$related;
 
-        $resource = ResourceFactory::resource($relationModel::ID, $this->model->$related);
+        if($relationObject instanceof ApiModel) {
+            return ResourceFactory::resourceObject($relationModel::ID, $relationObject);
+        } else if( $relationObject instanceof Collection) {
 
-        return $resource;
+            $filter_key = null;
+
+            if($relation instanceof HasOneOrMany) {
+                $filter_key = $relation->getForeignKeyName();
+            } else {
+                throw new \Exception('Implement!!! RelatedIndexjob@process');
+            }
+
+            // TODO: many to many will be interesting
+//            $relation->getParentKey()                 => 1
+//            $relation->getForeignKeyName()            => country_id
+//            $relation->getExistenceCompareKey()       => states.country_id
+//            $relation->getQualifiedParentKeyName()    => countries.id
+//            $relation->getQualifiedForeignKeyName()   => states.country_id
+
+            $all = request()->all();
+            $items = ApiJobFactory::index($relationModel::ID, array_merge($all, [
+                'filter' => [
+                    $filter_key => $this->model->id,
+                ]
+            ]));
+            return ResourceFactory::resourceCollection($relationModel::ID, $items);
+        }
+
     }
+
 
 }

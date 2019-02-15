@@ -17,8 +17,8 @@ class EagerLoading
     static public function loading($query, $modelId)
     {
         $includes = request()->input('include');
-
-        if($includes && $includes !== '') {
+        
+        if($includes && $includes !== '' && array_key_exists($modelId, $includes)) {
             $query->with(explode(",", $includes[$modelId]));
         }
 

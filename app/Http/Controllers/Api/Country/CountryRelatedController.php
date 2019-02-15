@@ -18,8 +18,9 @@ class CountryRelatedController extends ApiController
 
     public function index(CountryIndexRequest $request, Country $country, $related)
     {
-        $relatives = CountryRelatedIndexJob::dispatchNow($request->all(), $country, $related);
-        $resource = ResourceFactory::resource($related, $relatives);
+        $resource = CountryRelatedIndexJob::dispatchNow($request->all(), $country, $related);
+//        $resource = ResourceFactory::resource($related, $relatives);
+
         return $this->response($resource);
     }
 

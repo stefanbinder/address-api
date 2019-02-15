@@ -23,9 +23,4 @@ class CountryRelatedIndexJob extends RelatedIndexJob
         return $this->process();
     }
 
-//    public function president()
-//    {
-//        return new PersonResource($this->model->president);
-//    }
-
 }

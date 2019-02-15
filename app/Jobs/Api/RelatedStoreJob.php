@@ -14,6 +14,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 abstract class RelatedStoreJob implements ShouldQueue
 {
@@ -61,15 +63,24 @@ abstract class RelatedStoreJob implements ShouldQueue
     {
         $related = $this->related;
 
-        $stateRequest = ApiRequestFactory::store($related);
-        $storeDate = $stateRequest->validated();
+        // Get the request for the related object, for retrieving the Rules/Validator
+        // TODO: Refactor to validator
+        $request   = ApiRequestFactory::store($related);
+        $validator = Validator::make($this->request_data, (new $request)->rules());
 
-        $storeJob = ApiJobFactory::store($related);
-        $relatedModel = $storeJob::dispatchNow($storeDate);
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $validatedData = $validator->validate();
 
         if (!method_exists($this->model, $related)) {
             throw new \Exception('The given relation "' . $related . '" does not exist on model');
         }
+
+        // Validation done, Relation exists: Now we can store related object and attach to model
+        $storeJob = ApiJobFactory::store($related);
+        $relatedModel = $storeJob::dispatchNow($validatedData);
 
         $this->model->$related()->save($relatedModel);
 

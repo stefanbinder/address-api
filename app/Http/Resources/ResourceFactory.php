@@ -76,6 +76,7 @@ class ResourceFactory
      */
     public static function resource($resourceIdentifier, $mixed)
     {
+        \Log::info("ResourceFactory@resource $resourceIdentifier " . get_class($mixed) . " instanceof Countable: " . ($mixed instanceof Countable));
         if( $mixed instanceof ApiModel) {
             return ResourceFactory::resourceObject($mixed::ID, $mixed);
 
@@ -87,9 +88,12 @@ class ResourceFactory
             }
 
             return ResourceFactory::resourceCollection($resourceIdentifier, $mixed);
+        } else {
+
+            dd("not that null, right?!");
+            return null;
         }
 
-        return null;
     }
 
 }
