@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Person;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\Person\PersonIndexRequest;
-use App\Http\Resources\ResourceFactory;
+use App\Http\Resources\ApiResourceFactory;
 use App\Jobs\Api\Person\PersonRelatedDestroyJob;
 use App\Jobs\Api\Person\PersonRelatedIndexJob;
 use App\Jobs\Api\Person\PersonRelatedShowJob;
@@ -26,21 +26,21 @@ class PersonRelatedController extends ApiController
     public function show(Request $request, Person $person, $related, $id)
     {
         $relative = PersonRelatedShowJob::dispatchNow($request->all(), $person, $related, $id);
-        $resource = ResourceFactory::resourceObject($relative::ID, $relative);
+        $resource = ApiResourceFactory::resourceObject($relative::ID, $relative);
         return $this->response($resource);
     }
 
     public function store(Request $request, Person $person, $related)
     {
         $relative = PersonRelatedStoreJob::dispatchNow($request->all(), $person, $related);
-        $resource = ResourceFactory::resourceObject($relative::ID, $relative);
+        $resource = ApiResourceFactory::resourceObject($relative::ID, $relative);
         return $this->response($resource);
     }
 
     public function update(Request $request, Person $person, $related, $id)
     {
         $relative = PersonRelatedUpdateJob::dispatchNow($request->all(), $person, $related, $id);
-        $resource = ResourceFactory::resourceObject($relative::ID, $relative);
+        $resource = ApiResourceFactory::resourceObject($relative::ID, $relative);
         return $this->response($resource);
     }
 

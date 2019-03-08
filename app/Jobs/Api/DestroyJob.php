@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Api;
 
+use App\Exceptions\Api\Jobs\CouldNotDeleteException;
 use App\Exceptions\Api\ValidationException;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
@@ -48,16 +49,23 @@ abstract class DestroyJob implements ShouldQueue
     {
         $model = $this->model;
 
-        if($model && $model->delete()) {
+        if( $model->deleted_at ) {
+            return [
+                'meta' => [
+                    'id' => $model->id,
+                    'message' => 'It was already deleted on ' . $model->deleted_at->toDateTimeString(),
+                ]
+            ];
+        } else if( $model->delete() ) {
             return [
                 'meta' => [
                     'id' => $model->id,
                     'message' => 'deleted'
                 ]
             ];
+        } else {
+            throw new CouldNotDeleteException();
         }
-
-        throw new NotFoundHttpException('Resource not found');
     }
 
     /**

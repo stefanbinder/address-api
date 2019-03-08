@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\State;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\State\StateIndexRequest;
-use App\Http\Resources\ResourceFactory;
+use App\Http\Resources\ApiResourceFactory;
 use App\Jobs\Api\State\StateRelatedDestroyJob;
 use App\Jobs\Api\State\StateRelatedIndexJob;
 use App\Jobs\Api\State\StateRelatedShowJob;
@@ -26,21 +26,21 @@ class StateRelatedController extends ApiController
     public function show(Request $request, State $state, $related, $id)
     {
         $relative = StateRelatedShowJob::dispatchNow($request->all(), $state, $related, $id);
-        $resource = ResourceFactory::resourceObject($relative::ID, $relative);
+        $resource = ApiResourceFactory::resourceObject($relative::ID, $relative);
         return $this->response($resource);
     }
 
     public function store(Request $request, State $state, $related)
     {
         $relative = StateRelatedStoreJob::dispatchNow($request->all(), $state, $related);
-        $resource = ResourceFactory::resourceObject($relative::ID, $relative);
+        $resource = ApiResourceFactory::resourceObject($relative::ID, $relative);
         return $this->response($resource);
     }
 
     public function update(Request $request, State $state, $related, $id)
     {
         $relative = StateRelatedUpdateJob::dispatchNow($request->all(), $state, $related, $id);
-        $resource = ResourceFactory::resourceObject($relative::ID, $relative);
+        $resource = ApiResourceFactory::resourceObject($relative::ID, $relative);
         return $this->response($resource);
     }
 

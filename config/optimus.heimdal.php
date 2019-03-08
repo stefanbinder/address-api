@@ -1,18 +1,18 @@
 <?php
 
-use Symfony\Component\HttpKernel\Exception as SymfonyException;
+use App\Exceptions\BaseException;
 use Optimus\Heimdal\Formatters;
 
 return [
-    'add_cors_headers' => false,
+    'add_cors_headers' => true,
 
     // Has to be in prioritized order, e.g. highest priority first.
     'formatters' => [
 //        SymfonyException\UnprocessableEntityHttpException::class => Formatters\UnprocessableEntityHttpExceptionFormatter::class,
 //        SymfonyException\UnauthorizedHttpException::class => \App\Exceptions\Formatter\UnauthorizedHttpExceptionFormatter::class,
-//        SymfonyException\HttpException::class => Formatters\HttpExceptionFormatter::class,
-//        Exception::class => Formatters\ExceptionFormatter::class,
-        Exception::class => \App\Exceptions\Formatter\JsonApiFormatter::class,
+        \App\Exceptions\Api\Jobs\ValidationException::class => \App\Exceptions\Formatters\JsonApiValidationFormatter::class,
+        BaseException::class => \App\Exceptions\Formatters\JsonApiFormatter::class,
+        Exception::class => Formatters\ExceptionFormatter::class,
     ],
 
     'response_factory' => \Optimus\Heimdal\ResponseFactory::class,

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\User\Person;
+use App\Exceptions\Api\NotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
@@ -57,6 +57,22 @@ abstract class ApiModel extends Model
         }
 
         return $identifier_object;
+    }
+
+    /**
+     * @param mixed $value
+     * @return Model|null
+     * @throws NotFoundException
+     */
+    public function resolveRouteBinding($value)
+    {
+        $model = $this->find($value);
+
+        if( !$model ) {
+            throw new NotFoundException($this::ID, $value);
+        }
+
+        return $model;
     }
 
 }

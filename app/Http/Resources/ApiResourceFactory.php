@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Exceptions\Api\NotImplementedException;
 use App\Http\Resources\Country\CountriesResource;
 use App\Http\Resources\Country\CountryResource;
 use App\Http\Resources\Person\PeopleResource;
@@ -9,18 +10,17 @@ use App\Http\Resources\Person\PersonResource;
 use App\Http\Resources\State\StateResource;
 use App\Http\Resources\State\StatesResource;
 use App\Models\ApiModel;
-use ArrayAccess;
 use Countable;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ResourceFactory
+class ApiResourceFactory
 {
 
     /**
      * @param $resourceIdentifier
      * @param ApiModel $model
      * @return ResourceObject
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function resourceObject($resourceIdentifier, ApiModel $model)
     {
@@ -38,7 +38,7 @@ class ResourceFactory
             case 'people':
                 return new PersonResource($model);
             default:
-                throw new \Exception("ResourceObject for '$resourceIdentifier' is not defined in ResourceFactory");
+                throw new NotImplementedException("ResourceObject for '$resourceIdentifier' is not defined in ApiResourceFactory");
         }
     }
 
@@ -46,7 +46,7 @@ class ResourceFactory
      * @param $resourceIdentifier
      * @param $collection
      * @return ResourceCollection
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function resourceCollection($resourceIdentifier, $collection)
     {
@@ -61,7 +61,7 @@ class ResourceFactory
             case 'people':
                 return new PeopleResource($collection);
             default:
-                throw new \Exception("ResourceCollection for '$resourceIdentifier' is not defined in ResourceFactory");
+                throw new NotImplementedException("ResourceCollection for '$resourceIdentifier' is not defined in ApiResourceFactory");
         }
     }
 
@@ -72,13 +72,13 @@ class ResourceFactory
      * @param $resourceIdentifier
      * @param $mixed
      * @return ResourceObject|ResourceCollection
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function resource($resourceIdentifier, $mixed)
     {
-        \Log::info("ResourceFactory@resource $resourceIdentifier " . get_class($mixed) . " instanceof Countable: " . ($mixed instanceof Countable));
         if( $mixed instanceof ApiModel) {
-            return ResourceFactory::resourceObject($mixed::ID, $mixed);
+
+            return ApiResourceFactory::resourceObject($mixed::ID, $mixed);
 
         } else if( $mixed instanceof Countable ) {
 
@@ -87,11 +87,10 @@ class ResourceFactory
                 $resourceIdentifier = $mixed[0]::ID;
             }
 
-            return ResourceFactory::resourceCollection($resourceIdentifier, $mixed);
+            return ApiResourceFactory::resourceCollection($resourceIdentifier, $mixed);
         } else {
 
-            dd("not that null, right?!");
-            return null;
+            throw new NotImplementedException("The given resource isn't ApiModel either a Countable, please implement in ApiResourceFactory@resource");
         }
 
     }

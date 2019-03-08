@@ -73,10 +73,5 @@ class RelationshipIndexJob implements ShouldQueue
         ];
 
         return $relationships;
-
     }
-
-
-
-
 }

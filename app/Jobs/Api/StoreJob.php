@@ -2,7 +2,9 @@
 
 namespace App\Jobs\Api;
 
-use App\Exceptions\Api\ValidationException;
+use App\Exceptions\Api\Jobs\ValidationException;
+use App\Exceptions\Api\NotImplementedException;
+use App\Exceptions\Api\ResourceObjectTypeError;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
@@ -12,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\DB;
+use Mockery\Exception;
 
 abstract class StoreJob implements ShouldQueue
 {
@@ -55,8 +58,7 @@ abstract class StoreJob implements ShouldQueue
         $resourceObject = $this->request_data['data'];
 
         if ($this->model::ID !== $resourceObject['type']) {
-            // TODO: Exception Handling
-            throw new \Exception('ModelID does not fit the given type, cannot create resource');
+            throw new ResourceObjectTypeError($resourceObject['type'], $this->model::ID);
         }
 
         return DB::transaction(function() use($resourceObject) {
@@ -67,7 +69,8 @@ abstract class StoreJob implements ShouldQueue
                 $errors = ProcessRelations::processRelationships($model, $resourceObject['relationships']);
 
                 if($errors) {
-                    throw new ValidationException("Could not store relationships", $errors);
+                    // TODO: make that exception for showing all collected errors
+                    throw new NotImplementedException('Return errors in proper way in StoreJob@process');
                 }
 
             }

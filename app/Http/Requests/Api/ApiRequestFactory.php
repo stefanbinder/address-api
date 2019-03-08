@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Exceptions\Api\NotImplementedException;
 use App\Http\Requests\Api\Country\CountryDestroyRequest;
 use App\Http\Requests\Api\Country\CountryIndexRequest;
 use App\Http\Requests\Api\Country\CountryShowRequest;
@@ -30,7 +31,7 @@ class ApiRequestFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function index($resourceIdentifier)
     {
@@ -40,7 +41,7 @@ class ApiRequestFactory
             case 'states': return StateIndexRequest::class;
             case 'people': return PersonIndexRequest::class;
             default:
-                throw new \Exception("IndexRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
+                throw new NotImplementedException("IndexRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
 
     }
@@ -48,7 +49,7 @@ class ApiRequestFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function show($resourceIdentifier)
     {
@@ -58,7 +59,7 @@ class ApiRequestFactory
             case 'states': return StateShowRequest::class;
             case 'people': return PersonShowRequest::class;
             default:
-                throw new \Exception("ShowRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
+                throw new NotImplementedException("ShowRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
 
     }
@@ -66,7 +67,7 @@ class ApiRequestFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function store($resourceIdentifier)
     {
@@ -76,7 +77,7 @@ class ApiRequestFactory
             case 'states': return StateStoreRequest::class;
             case 'people': return PersonStoreRequest::class;
             default:
-                throw new \Exception("StoreRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
+                throw new NotImplementedException("StoreRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
 
     }
@@ -84,7 +85,7 @@ class ApiRequestFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function update($resourceIdentifier)
     {
@@ -94,7 +95,7 @@ class ApiRequestFactory
             case 'states': return StateUpdateRequest::class;
             case 'people': return PersonUpdateRequest::class;
             default:
-                throw new \Exception("UpdateRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
+                throw new NotImplementedException("UpdateRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
 
     }
@@ -102,7 +103,7 @@ class ApiRequestFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function destroy($resourceIdentifier)
     {
@@ -112,7 +113,7 @@ class ApiRequestFactory
             case 'states': return StateDestroyRequest::class;
             case 'people': return PersonDestroyRequest::class;
             default:
-                throw new \Exception("DestroyRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
+                throw new NotImplementedException("DestroyRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
 
     }

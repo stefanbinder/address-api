@@ -2,6 +2,7 @@
 
 namespace App\Jobs\ProcessingSteps;
 
+use App\Exceptions\Api\NotImplementedException;
 use App\Exceptions\Api\ResourceObjectTypeError;
 use App\Http\Requests\Api\ApiRequestFactory;
 use App\Models\ApiModel;
@@ -82,8 +83,7 @@ class ProcessRelations
                         self::processRelationshipPivot($model, $relationship, $resourceData);
                         break;
                     default:
-                        throw new \Exception('The relationship ' . get_class($relationship) . ' is not handled by backend');
-
+                        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not handled by backend');
                 }
             } catch (ValidationException $e) {
                 $validationErrors = array_merge($validationErrors, $e->errors());
@@ -207,37 +207,37 @@ class ProcessRelations
 
     public static function processRelationshipHasManyThrough(Model $model, $relationship, $resourceData)
     {
-        throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
     public static function processRelationshipMorphMany(Model $model, $relationship, $resourceData)
     {
-        throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
     public static function processRelationshipMorphOne(Model $model, $relationship, $resourceData)
     {
-        throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
     public static function processRelationshipMorphPivot(Model $model, $relationship, $resourceData)
     {
-        throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
     public static function processRelationshipMorphTo(Model $model, $relationship, $resourceData)
     {
-        throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
     public static function processRelationshipMorphToMany(Model $model, $relationship, $resourceData)
     {
-        throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
     public static function processRelationshipPivot(Model $model, $relationship, $resourceData)
     {
-        throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
 
@@ -271,6 +271,7 @@ class ProcessRelations
      * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|MessageBag|null
      * @throws ResourceObjectTypeError
      * @throws ValidationException
+     * @throws \App\Exceptions\Api\NotImplementedException
      */
     public static function getAndStoreOrUpdateRelationModel(Relation $relationship, $resourceData)
     {

@@ -2,6 +2,8 @@
 
 namespace App\Jobs\Api;
 
+use App\Exceptions\Api\NotImplementedException;
+use App\Exceptions\Api\ResourceObjectTypeError;
 use App\Exceptions\Api\ValidationException;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
@@ -51,8 +53,7 @@ abstract class UpdateJob implements ShouldQueue
         $resourceObject = $this->request_data['data'];
 
         if ($this->model::ID !== $resourceObject['type']) {
-            // TODO: Exception Handling
-            throw new \Exception('ModelID does not fit the given type, cannot create resource');
+            throw new ResourceObjectTypeError($resourceObject['type'], $this->model::ID);
         }
 
         $attributes = $this->processAttributes($resourceObject['attributes']);
@@ -61,9 +62,9 @@ abstract class UpdateJob implements ShouldQueue
         if( array_key_exists('relationships', $resourceObject) ) {
             $errors = ProcessRelations::processRelationships($model, $resourceObject['relationships']);
 
-            // TODO: Exception handling
             if( $errors ) {
-                throw new ValidationException('Validation errors', $errors);
+                // TODO: make that exception for showing all collected errors
+                throw new NotImplementedException('Return errors in proper way in UpdateJob@process');
             }
         }
 

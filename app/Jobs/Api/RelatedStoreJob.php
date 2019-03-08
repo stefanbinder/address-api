@@ -2,20 +2,16 @@
 
 namespace App\Jobs\Api;
 
+use App\Exceptions\Api\Jobs\NotFoundRelationship;
+use App\Exceptions\Api\Jobs\ValidationException;
 use App\Http\Requests\Api\ApiRequestFactory;
-use App\Http\Requests\Api\State\StateStoreRequest;
-use App\Http\Resources\State\StateResource;
-use App\Jobs\Api\State\StateStoreJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 
 abstract class RelatedStoreJob implements ShouldQueue
 {
@@ -69,13 +65,14 @@ abstract class RelatedStoreJob implements ShouldQueue
         $validator = Validator::make($this->request_data, (new $request)->rules());
 
         if ($validator->fails()) {
+            // The JsonApiValidationFormatter catch's that exception and formats it accordingly
             throw new ValidationException($validator);
         }
 
         $validatedData = $validator->validate();
 
         if (!method_exists($this->model, $related)) {
-            throw new \Exception('The given relation "' . $related . '" does not exist on model');
+            throw new NotFoundRelationship($related , get_class($this->model));
         }
 
         // Validation done, Relation exists: Now we can store related object and attach to model

@@ -2,19 +2,16 @@
 
 namespace App\Exceptions\Api;
 
+use App\Exceptions\ApiErrorCode;
+use App\Exceptions\BaseException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-class TokenNotProvidedException extends UnauthorizedHttpException
+class TokenNotProvidedException extends BaseException
 {
 
-    public function __construct($message = null)
-    {
-        if( ! $message ) {
-            $message = "The Token is not provided, please send correct token as parameter or as Authorization Header.";
-        }
-
-        parent::__construct("Bearer Token", $message, $this, Response::HTTP_UNAUTHORIZED);
-    }
+    protected $message = 'exceptions.auth.token_not_provided';
+    protected $detail = 'exceptions.auth.token_not_provided_detail';
+    protected $code = Response::HTTP_UNAUTHORIZED;
+    protected $api_error_code = ApiErrorCode::AUTH_TOKEN_NOT_PROVIDED;
 
 }

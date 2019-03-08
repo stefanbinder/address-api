@@ -2,6 +2,9 @@
 
 namespace App\Jobs\Api;
 
+use App\Exceptions\Api\Jobs\NotFoundRelatedException;
+use App\Exceptions\Api\Jobs\NotFoundRelationship;
+use App\Exceptions\Api\NotFoundException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -59,7 +62,7 @@ abstract class RelatedShowJob implements ShouldQueue
         $related = $this->related;
 
         if (!method_exists($this->model, $related)) {
-            throw new \Exception('The given relation "' . $related . '" does not exist on model');
+            throw new NotFoundRelationship($related , get_class($this->model));
         }
 
         return $this->getModelFromRelation($this->model->$related(), $this->id);
@@ -69,11 +72,16 @@ abstract class RelatedShowJob implements ShouldQueue
      * @param Relation $relation
      * @param $id
      * @return \App\Models\ApiModel|\Illuminate\Database\Eloquent\Model|null
+     * @throws NotFoundRelatedException
      */
     private function getModelFromRelation(Relation $relation, $id)
     {
-        $relationModel = $relation->getModel();
-        $model = $relationModel::find($id);
+        $model = $relation->find($id);
+
+        if(!$model) {
+            throw new NotFoundRelatedException($this->related, $id, $this->model::ID, $this->model->id);
+        }
+
         return $model;
     }
 

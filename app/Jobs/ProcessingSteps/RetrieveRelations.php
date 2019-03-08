@@ -264,6 +264,7 @@ class RetrieveRelations
      * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|MessageBag|null
      * @throws ResourceObjectTypeError
      * @throws ValidationException
+     * @throws \App\Exceptions\Api\NotImplementedException
      */
     public static function getAndStoreOrUpdateRelationModel(Relation $relationship, $resourceData)
     {

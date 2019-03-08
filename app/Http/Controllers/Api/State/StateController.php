@@ -8,7 +8,7 @@ use App\Http\Requests\Api\State\StateIndexRequest;
 use App\Http\Requests\Api\State\StateShowRequest;
 use App\Http\Requests\Api\State\StateStoreRequest;
 use App\Http\Requests\Api\State\StateUpdateRequest;
-use App\Http\Resources\ResourceFactory;
+use App\Http\Resources\ApiResourceFactory;
 use App\Http\Resources\State\StatesResource;
 use App\Http\Resources\State\StateResource;
 use App\Jobs\Api\State\StateDestroyJob;
@@ -23,14 +23,14 @@ class StateController extends ApiController
     public function index(StateIndexRequest $request)
     {
         $states   = StateIndexJob::dispatchNow($request->all());
-        $resource = ResourceFactory::resourceCollection("states", $states);
+        $resource = ApiResourceFactory::resourceCollection("states", $states);
 
         return $this->response($resource);
     }
 
     public function show(StateShowRequest $request, State $state)
     {
-        $resource = ResourceFactory::resourceObject("state", $state);
+        $resource = ApiResourceFactory::resourceObject("state", $state);
         return $this->response($resource);
     }
 
@@ -38,7 +38,7 @@ class StateController extends ApiController
     {
         $data     = $request->validated();
         $state    = StateStoreJob::dispatchNow($data);
-        $resource = ResourceFactory::resourceObject("state", $state);
+        $resource = ApiResourceFactory::resourceObject("state", $state);
 
         return $this->response($resource);
     }
@@ -47,7 +47,7 @@ class StateController extends ApiController
     {
         $data     = $request->validated();
         $state    = StateUpdateJob::dispatchNow($state, $data);
-        $resource = ResourceFactory::resourceObject("state", $state);
+        $resource = ApiResourceFactory::resourceObject("state", $state);
 
         return $this->response($resource);
     }

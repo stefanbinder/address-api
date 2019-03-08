@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Api;
 
+use App\Exceptions\Api\Jobs\NotFoundRelatedException;
 use App\Http\Requests\Api\ApiRequestFactory;
 use App\Http\Requests\Api\State\StateStoreRequest;
 use App\Http\Resources\State\StateResource;
@@ -63,11 +64,13 @@ abstract class RelatedDestroyJob implements ShouldQueue
     public function process()
     {
         $related = $this->related;
+        $relatedModel = $this->model->$related()->withTrashed()->find($this->id);
 
-        $relationship = $this->model->$related();
-        $relatedModel = ProcessRelations::getRelationModel($relationship, $related, $this->id);
+        if(!$relatedModel) {
+            throw new NotFoundRelatedException($related, $this->id, $this->model::ID, $this->model->id);
+        }
+
         $destroyJob   = ApiJobFactory::destroy($related);
-
         return $destroyJob::dispatchNow($relatedModel);
     }
 

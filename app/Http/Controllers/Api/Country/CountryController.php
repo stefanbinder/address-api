@@ -8,7 +8,7 @@ use App\Http\Requests\Api\Country\CountryIndexRequest;
 use App\Http\Requests\Api\Country\CountryShowRequest;
 use App\Http\Requests\Api\Country\CountryStoreRequest;
 use App\Http\Requests\Api\Country\CountryUpdateRequest;
-use App\Http\Resources\ResourceFactory;
+use App\Http\Resources\ApiResourceFactory;
 use App\Jobs\Api\Country\CountryDestroyJob;
 use App\Jobs\Api\Country\CountryIndexJob;
 use App\Jobs\Api\Country\CountryStoreJob;
@@ -20,19 +20,19 @@ class CountryController extends ApiController
 
     public function __construct()
     {
-//        $this->middleware('api.auth');
+        $this->middleware('api.auth');
     }
 
     public function index(CountryIndexRequest $request)
     {
         $countries = CountryIndexJob::dispatchNow($request->all());
-        $resource  = ResourceFactory::resourceCollection("countries", $countries);
+        $resource  = ApiResourceFactory::resourceCollection("countries", $countries);
         return $this->response($resource);
     }
 
     public function show(CountryShowRequest $request, Country $country)
     {
-        $resource = ResourceFactory::resourceObject("country", $country);
+        $resource = ApiResourceFactory::resourceObject("country", $country);
         return $this->response($resource);
     }
 
@@ -40,7 +40,7 @@ class CountryController extends ApiController
     {
         $data     = $request->validated();
         $country  = CountryStoreJob::dispatchNow($data);
-        $resource = ResourceFactory::resourceObject("country", $country);
+        $resource = ApiResourceFactory::resourceObject("country", $country);
 
         return $this->response($resource);
     }
@@ -49,13 +49,14 @@ class CountryController extends ApiController
     {
         $data     = $request->validated();
         $country  = CountryUpdateJob::dispatchNow($country, $data);
-        $resource = ResourceFactory::resourceObject("country", $country);
+        $resource = ApiResourceFactory::resourceObject("country", $country);
 
         return $this->response($resource);
     }
 
-    public function destroy(CountryDestroyRequest $request, Country $country)
+    public function destroy(CountryDestroyRequest $request, $country)
     {
+        $country = Country::withTrashed()->find($country);
         $country = CountryDestroyJob::dispatchNow($country);
         return $this->response($country);
     }

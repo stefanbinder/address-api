@@ -2,9 +2,9 @@
 
 namespace App\Jobs\Api;
 
-use App\Http\Resources\ResourceFactory;
-use App\Jobs\Api\State\StateIndexJob;
-use App\Jobs\ProcessingSteps\RetrieveRelations;
+use App\Exceptions\Api\Jobs\NotFoundRelationship;
+use App\Exceptions\Api\NotImplementedException;
+use App\Http\Resources\ApiResourceFactory;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Collection;
+
 
 abstract class RelatedIndexJob implements ShouldQueue
 {
@@ -60,7 +61,7 @@ abstract class RelatedIndexJob implements ShouldQueue
         $related = $this->related;
 
         if( ! method_exists($this->model, $related) ) {
-            throw new \Exception('The model "'.get_class($this->model).'" does not have relation "'.$related);
+            throw new NotFoundRelationship($related, get_class($this->model));
         }
 
         $relation = $this->model->$related();
@@ -68,7 +69,7 @@ abstract class RelatedIndexJob implements ShouldQueue
         $relationObject = $this->model->$related;
 
         if($relationObject instanceof ApiModel) {
-            return ResourceFactory::resourceObject($relationModel::ID, $relationObject);
+            return ApiResourceFactory::resourceObject($relationModel::ID, $relationObject);
         } else if( $relationObject instanceof Collection) {
 
             $filter_key = null;
@@ -76,7 +77,7 @@ abstract class RelatedIndexJob implements ShouldQueue
             if($relation instanceof HasOneOrMany) {
                 $filter_key = $relation->getForeignKeyName();
             } else {
-                throw new \Exception('Missing Implementation! RelatedIndexjob@process');
+                throw new NotImplementedException('Missing Implementation of relationship handling! RelatedIndexjob@process');
             }
 
             // TODO: many to many will be interesting
@@ -93,7 +94,7 @@ abstract class RelatedIndexJob implements ShouldQueue
                 ]
             ]));
 
-            return ResourceFactory::resourceCollection($relationModel::ID, $items);
+            return ApiResourceFactory::resourceCollection($relationModel::ID, $items);
         }
 
     }

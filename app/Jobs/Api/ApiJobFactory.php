@@ -3,6 +3,7 @@
 namespace App\Jobs\Api;
 
 
+use App\Exceptions\Api\NotImplementedException;
 use App\Jobs\Api\Country\CountryDestroyJob;
 use App\Jobs\Api\Country\CountryIndexJob;
 use App\Jobs\Api\Country\CountryRelatedDestroyJob;
@@ -27,7 +28,6 @@ use App\Jobs\Api\State\StateRelatedStoreJob;
 use App\Jobs\Api\State\StateRelatedUpdateJob;
 use App\Jobs\Api\State\StateStoreJob;
 use App\Jobs\Api\State\StateUpdateJob;
-use App\Models\ApiModel;
 
 class ApiJobFactory
 {
@@ -36,7 +36,7 @@ class ApiJobFactory
      * @param $resourceIdentifier
      * @param $data
      * @return mixed
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function index($resourceIdentifier, $data)
     {
@@ -46,7 +46,7 @@ class ApiJobFactory
             case 'states': return StateIndexJob::dispatchNow($data);
             case 'people': return PersonIndexJob::dispatchNow($data);
             default:
-                throw new \Exception("IndexJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("IndexJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }
@@ -54,7 +54,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return mixed
-     * @throws \Exception
+     * @throws NotImplementedException
      */
 //    public static function show($resourceIdentifier)
 //    {
@@ -64,7 +64,7 @@ class ApiJobFactory
 //            case 'states': return self::make(StateShowJob::class);
 //            case 'people': return self::make(PersonShowJob::class);
 //            default:
-//                throw new \Exception("ShowJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+//                throw new NotImplementedException("ShowJob for '$resourceIdentifier' is not defined in ApiJobFactory");
 //        }
 //
 //    }
@@ -72,7 +72,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function store($resourceIdentifier)
     {
@@ -82,7 +82,7 @@ class ApiJobFactory
             case 'states': return StateStoreJob::class;
             case 'people': return PersonStoreJob::class;
             default:
-                throw new \Exception("StoreJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("StoreJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }
@@ -90,7 +90,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function update($resourceIdentifier)
     {
@@ -100,7 +100,7 @@ class ApiJobFactory
             case 'states': return StateUpdateJob::class;
             case 'people': return PersonUpdateJob::class;
             default:
-                throw new \Exception("UpdateJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("UpdateJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }
@@ -108,7 +108,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function destroy($resourceIdentifier)
     {
@@ -118,7 +118,7 @@ class ApiJobFactory
             case 'states': return StateDestroyJob::class;
             case 'people': return PersonDestroyJob::class;
             default:
-                throw new \Exception("DestroyJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("DestroyJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }
@@ -127,7 +127,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return mixed
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function relatedIndex($resourceIdentifier)
     {
@@ -137,7 +137,7 @@ class ApiJobFactory
             case 'states': return StateRelatedIndexJob::class;
             case 'people': return PersonRelatedIndexJob::class;
             default:
-                throw new \Exception("IndexJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("IndexJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }
@@ -145,7 +145,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return mixed
-     * @throws \Exception
+     * @throws NotImplementedException
      */
 //    public static function relatedShow($resourceIdentifier)
 //    {
@@ -155,7 +155,7 @@ class ApiJobFactory
 //            case 'states': return self::make(StateShowJob::class);
 //            case 'people': return self::make(PersonShowJob::class);
 //            default:
-//                throw new \Exception("ShowJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+//                throw new NotImplementedException("ShowJob for '$resourceIdentifier' is not defined in ApiJobFactory");
 //        }
 //
 //    }
@@ -163,7 +163,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function relatedStore($resourceIdentifier)
     {
@@ -173,7 +173,7 @@ class ApiJobFactory
             case 'states': return StateRelatedStoreJob::class;
             case 'people': return PersonRelatedStoreJob::class;
             default:
-                throw new \Exception("StoreJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("StoreJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }
@@ -181,7 +181,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function relatedUpdate($resourceIdentifier)
     {
@@ -191,7 +191,7 @@ class ApiJobFactory
             case 'states': return StateRelatedUpdateJob::class;
             case 'people': return PersonRelatedUpdateJob::class;
             default:
-                throw new \Exception("UpdateJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("UpdateJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }
@@ -199,7 +199,7 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @return string
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public static function relatedDestroy($resourceIdentifier)
     {
@@ -209,7 +209,7 @@ class ApiJobFactory
             case 'states': return StateRelatedDestroyJob::class;
             case 'people': return PersonRelatedDestroyJob::class;
             default:
-                throw new \Exception("DestroyJob for '$resourceIdentifier' is not defined in ApiJobFactory");
+                throw new NotImplementedException("DestroyJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
 
     }

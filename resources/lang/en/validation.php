@@ -141,6 +141,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'data.id' => 'ID',
+        'data.type' => 'Type',
+        'data.attributes.name' => 'Name',
+    ],
 
 ];
