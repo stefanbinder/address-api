@@ -29,6 +29,9 @@ class Country extends ApiModel
     ];
 
     const FILTERABLE = [
+        'id',
+        'name',
+        'code',
     ];
 
     const SEARCHABLE = [

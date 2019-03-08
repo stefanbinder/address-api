@@ -18,6 +18,11 @@ use App\Models\Address\Country;
 class CountryController extends ApiController
 {
 
+    public function __construct()
+    {
+//        $this->middleware('api.auth');
+    }
+
     public function index(CountryIndexRequest $request)
     {
         $countries = CountryIndexJob::dispatchNow($request->all());

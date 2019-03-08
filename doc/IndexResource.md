@@ -43,19 +43,16 @@ Example:
 An index request accepts the reserved query parameter ```filter``` for filtering data.
 The ```filter``` must be an array.
 
+### Easy 'equals' Filtering
+
 Simple Example for requesting all countries with the code 'us':
 ```
 /api/countries?filter[code]=us
 ```
 
-Multiple filter values can be defined comma-seperated:
-```
-/api/states?filter[country_id]=2,5,6
-```
-
 Multiple filter can be applied to a single request:
 ```
-/api/states?filter[country_id]=2,5,6&filter[name]=Test
+/api/states?filter[country_id]=2&filter[name]=Test
 ```
 
 ### Advanced Filtering
@@ -88,8 +85,7 @@ Check the following examples:
 
 Multiple filter can be applied for one attribute:
 ```
-/api/countries?filter[created_at][gt]=2018-01-01
-/api/countries?filter[created_at][lt]=2019-01-01
+/api/countries?filter[created_at][gt]=2018-01-01&filter[created_at][lt]=2019-01-01
 ```
 
 # General inclusions or restrictions

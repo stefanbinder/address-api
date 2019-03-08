@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Api;
 
-use Dotenv\Exception\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -27,12 +26,8 @@ abstract class ApiRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        $errorResponse = [];
-
+        $errorResponse = ['errors' => []];
         $errorResponse['errors'] = $this->prepareErrors($validator->errors());
-
-        // TODO: Implementing all possible error-information of jsonapi.org
-        // https://jsonapi.org/format/#error-objects
 
         throw new HttpResponseException(response()->json(
             $errorResponse,
@@ -45,10 +40,17 @@ abstract class ApiRequest extends FormRequest
         $prepared = [];
         foreach($messageBag->getMessages() as $key => $error) {
 
-            $key = str_replace('data.', '', $key);
-            $error = str_replace('data.', '', $error);
-
-            $prepared[$key] = $error;
+            $prepared[] = [
+                'status' => JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
+                'title'  => 'Invalid Attribute',
+                'detail' => implode(" ", $error),
+                'source' => ['pointer' => $key],
+                // TODO: Implement a better Exception Handling Strategy
+//                'id'     => 'the-id',
+//                'links'  => [],
+//                'code'   => 'error-code',
+//                'meta'   => [],
+            ];
         }
         return $prepared;
     }

@@ -18,6 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('authenticate', 'Api\AuthenticationController@authenticate');
+Route::post('register', 'Api\AuthenticationController@register');
+
 build_basic_api_routes('country');
 build_basic_api_routes('state');
 build_basic_api_routes('person');
