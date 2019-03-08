@@ -14,9 +14,10 @@ abstract class ApiModel extends Model
 
     const ID = null;
 
-    public function get_identifier_object() {
+    public function get_identifier_object()
+    {
         return [
-            'id' => $this->id,
+            'id'   => $this->id,
             'type' => static::ID,
         ];
     }
@@ -36,7 +37,7 @@ abstract class ApiModel extends Model
             $relationshipModelOrCollection = $this->$relationship;
 
             // The value is not set, so already return null
-            if( ! $relationshipModelOrCollection ) {
+            if (!$relationshipModelOrCollection) {
                 return null;
             }
 
@@ -68,7 +69,7 @@ abstract class ApiModel extends Model
     {
         $model = $this->find($value);
 
-        if( !$model ) {
+        if (!$model) {
             throw new NotFoundException($this::ID, $value);
         }
 

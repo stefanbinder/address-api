@@ -26,10 +26,10 @@ class CountryUpdateRequest extends ApiRequest
         $model = $this->route('country');
 
         return [
-            'data.id'                       => 'required|exists:countries,id',
-            'data.type'                     => 'required',
-            'data.attributes.name'          => 'string|nullable',
-            'data.attributes.code'          => 'size:2|unique:countries,id,' . $model->id,
+            'data.id'                      => 'required|exists:countries,id',
+            'data.type'                    => 'required',
+            'data.attributes.name'         => 'string|nullable',
+            'data.attributes.code'         => 'size:2|unique:countries,id,' . $model->id,
             'data.attributes.inhabitants'  => '',
             'data.attributes.founded_at'   => '',
             'data.attributes.some_time'    => '',

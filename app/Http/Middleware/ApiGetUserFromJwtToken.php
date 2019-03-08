@@ -5,10 +5,7 @@ namespace App\Http\Middleware;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\TokenInvalidException;
 use App\Exceptions\Api\TokenNotProvidedException;
-use App\Models\User;
 use Closure;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
 
@@ -38,7 +35,7 @@ class ApiGetUserFromJwtToken
      */
     public function handle($request, Closure $next)
     {
-        if (! $token = $this->auth->setRequest($request)->getToken()) {
+        if (!$token = $this->auth->setRequest($request)->getToken()) {
             throw new TokenNotProvidedException();
         }
 
@@ -50,7 +47,7 @@ class ApiGetUserFromJwtToken
             throw new TokenInvalidException();
         }
 
-        if (! $user) {
+        if (!$user) {
             throw new NotFoundException('User');
         }
 

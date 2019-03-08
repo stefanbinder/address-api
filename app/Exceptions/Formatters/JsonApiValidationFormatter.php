@@ -3,7 +3,6 @@
 namespace App\Exceptions\Formatters;
 
 use App\Exceptions\Api\Jobs\ValidationException;
-use App\Exceptions\BaseException;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Optimus\Heimdal\Formatters\BaseFormatter;
@@ -15,7 +14,7 @@ class JsonApiValidationFormatter extends BaseFormatter
         $errors = ['errors' => []];
 
         if ($e instanceof ValidationException) {
-            $validator     = $e->validator;
+            $validator = $e->validator;
 
             foreach ($validator->errors()->getMessages() as $key => $error) {
 

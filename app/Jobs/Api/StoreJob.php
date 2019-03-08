@@ -2,19 +2,17 @@
 
 namespace App\Jobs\Api;
 
-use App\Exceptions\Api\Jobs\ValidationException;
 use App\Exceptions\Api\NotImplementedException;
 use App\Exceptions\Api\ResourceObjectTypeError;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Mockery\Exception;
 
 abstract class StoreJob implements ShouldQueue
 {
@@ -61,14 +59,14 @@ abstract class StoreJob implements ShouldQueue
             throw new ResourceObjectTypeError($resourceObject['type'], $this->model::ID);
         }
 
-        return DB::transaction(function() use($resourceObject) {
+        return DB::transaction(function () use ($resourceObject) {
             $attributes = $this->processAttributes($resourceObject['attributes']);
             $model      = $this->model::create($attributes);
 
-            if( array_key_exists('relationships', $resourceObject) ) {
+            if (array_key_exists('relationships', $resourceObject)) {
                 $errors = ProcessRelations::processRelationships($model, $resourceObject['relationships']);
 
-                if($errors) {
+                if ($errors) {
                     // TODO: make that exception for showing all collected errors
                     throw new NotImplementedException('Return errors in proper way in StoreJob@process');
                 }

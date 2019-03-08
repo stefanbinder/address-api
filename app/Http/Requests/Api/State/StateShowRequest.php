@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\State;
 
 use App\Http\Requests\Api\ApiRequest;
-use Illuminate\Support\Facades\Request;
 
 class StateShowRequest extends ApiRequest
 {

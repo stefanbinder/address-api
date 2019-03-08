@@ -17,17 +17,16 @@ class Tag extends Model
         'founded_at',
         'last_visited',
     ];
-    
+
     protected $fillable = [
         'name',
     ];
-    
+
     const FILTERABLE = [
     ];
-    
+
     const SEARCHABLE = [
     ];
-    
-    
+
 
 }

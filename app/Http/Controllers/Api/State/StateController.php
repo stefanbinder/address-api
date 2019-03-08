@@ -9,8 +9,6 @@ use App\Http\Requests\Api\State\StateShowRequest;
 use App\Http\Requests\Api\State\StateStoreRequest;
 use App\Http\Requests\Api\State\StateUpdateRequest;
 use App\Http\Resources\ApiResourceFactory;
-use App\Http\Resources\State\StatesResource;
-use App\Http\Resources\State\StateResource;
 use App\Jobs\Api\State\StateDestroyJob;
 use App\Jobs\Api\State\StateIndexJob;
 use App\Jobs\Api\State\StateStoreJob;

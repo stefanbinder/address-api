@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\Relation;
 
 use App\Http\Requests\Api\ApiRequest;
-use App\Http\Requests\Api\State\StateStoreRequest;
 
 class RelatedStoreRequest extends ApiRequest
 {
@@ -18,9 +17,9 @@ class RelatedStoreRequest extends ApiRequest
     public function validated()
     {
         $related = $this->route('related');
-        $type = $this->input('data.type');
+        $type    = $this->input('data.type');
 
-        $name = "App\Http\Requests\Api\State\StateStoreRequest";
+        $name                 = "App\Http\Requests\Api\State\StateStoreRequest";
         $this->relatedRequest = new $name($this->query, $this->request, $this->attributes, $this->cookies, $this->files, $this->server, $this->content);
 
         return $this->getValidatorInstance()->validate();

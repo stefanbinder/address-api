@@ -3,8 +3,6 @@
 namespace App\Exceptions;
 
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
-use Throwable;
 
 class BaseException extends Exception
 {

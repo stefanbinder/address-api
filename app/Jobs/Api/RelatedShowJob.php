@@ -4,14 +4,13 @@ namespace App\Jobs\Api;
 
 use App\Exceptions\Api\Jobs\NotFoundRelatedException;
 use App\Exceptions\Api\Jobs\NotFoundRelationship;
-use App\Exceptions\Api\NotFoundException;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 abstract class RelatedShowJob implements ShouldQueue
 {
@@ -62,7 +61,7 @@ abstract class RelatedShowJob implements ShouldQueue
         $related = $this->related;
 
         if (!method_exists($this->model, $related)) {
-            throw new NotFoundRelationship($related , get_class($this->model));
+            throw new NotFoundRelationship($related, get_class($this->model));
         }
 
         return $this->getModelFromRelation($this->model->$related(), $this->id);
@@ -78,7 +77,7 @@ abstract class RelatedShowJob implements ShouldQueue
     {
         $model = $relation->find($id);
 
-        if(!$model) {
+        if (!$model) {
             throw new NotFoundRelatedException($this->related, $id, $this->model::ID, $this->model->id);
         }
 

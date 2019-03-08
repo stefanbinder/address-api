@@ -24,7 +24,7 @@ class Filter
                 foreach ($filter as $sub_filter_key => $sub_filter) {
                     [$comparator, $value] = self::getFilterComparator($sub_filter_key, $sub_filter);
 
-                    if( $comparator === 'in' ) {
+                    if ($comparator === 'in') {
                         $query->whereIn($attribute, $value);
                     } else {
                         $query->where($attribute, $comparator, $value);
@@ -47,15 +47,15 @@ class Filter
         switch ($textual_comparator) {
             case 'contains':
                 $comparator = 'LIKE';
-                $filter      = "%$filter%";
+                $filter     = "%$filter%";
                 break;
             case 'starts_with':
                 $comparator = 'LIKE';
-                $filter      = "$filter%";
+                $filter     = "$filter%";
                 break;
             case 'ends_with':
                 $comparator = 'LIKE';
-                $filter      = "%$filter";
+                $filter     = "%$filter";
                 break;
             case 'gt':
                 $comparator = '>';
@@ -71,7 +71,7 @@ class Filter
                 break;
             case 'in':
                 $comparator = 'in';
-                $filter = explode(",", $filter);
+                $filter     = explode(",", $filter);
                 break;
         }
 

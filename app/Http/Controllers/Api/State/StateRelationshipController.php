@@ -7,7 +7,6 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\State\StateIndexRequest;
 use App\Jobs\Api\RelationshipIndexJob;
 use App\Models\Address\State;
-use Illuminate\Support\Facades\Request;
 
 class StateRelationshipController extends ApiController
 {

@@ -20,8 +20,8 @@ class TransformIncludeAndFieldsParams
      *      'states' => ['districts']
      * ]
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -36,7 +36,7 @@ class TransformIncludeAndFieldsParams
     {
         $preparation = $request->input($field);
 
-        if( !$preparation ) {
+        if (!$preparation) {
             return null;
         }
 
@@ -44,7 +44,7 @@ class TransformIncludeAndFieldsParams
          * $preparation should either be a string "relation1,relation2" or an array with the relations
          * If just the string is given, we are transforming the string into an array with the given URL as indicator
          */
-        if( ! is_array($preparation) ) {
+        if (!is_array($preparation)) {
             $routeName = $request->route()->getName();
 
             // routeName is eg. "countries.index", we just take the first part of a route as baseName

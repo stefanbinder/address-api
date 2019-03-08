@@ -8,8 +8,6 @@ use App\Http\Requests\Api\Person\PersonIndexRequest;
 use App\Http\Requests\Api\Person\PersonShowRequest;
 use App\Http\Requests\Api\Person\PersonStoreRequest;
 use App\Http\Requests\Api\Person\PersonUpdateRequest;
-use App\Http\Resources\Person\PeopleResource;
-use App\Http\Resources\Person\PersonResource;
 use App\Http\Resources\ApiResourceFactory;
 use App\Jobs\Api\Person\PersonDestroyJob;
 use App\Jobs\Api\Person\PersonIndexJob;

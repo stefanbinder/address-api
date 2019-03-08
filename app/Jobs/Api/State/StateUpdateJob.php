@@ -2,9 +2,7 @@
 
 namespace App\Jobs\Api\State;
 
-use App\Jobs\Api\StoreJob;
 use App\Jobs\Api\UpdateJob;
-use App\Models\Address\State;
 
 class StateUpdateJob extends UpdateJob
 {

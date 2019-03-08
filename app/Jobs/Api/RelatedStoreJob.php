@@ -6,11 +6,11 @@ use App\Exceptions\Api\Jobs\NotFoundRelationship;
 use App\Exceptions\Api\Jobs\ValidationException;
 use App\Http\Requests\Api\ApiRequestFactory;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Validator;
 
 abstract class RelatedStoreJob implements ShouldQueue
@@ -72,11 +72,11 @@ abstract class RelatedStoreJob implements ShouldQueue
         $validatedData = $validator->validate();
 
         if (!method_exists($this->model, $related)) {
-            throw new NotFoundRelationship($related , get_class($this->model));
+            throw new NotFoundRelationship($related, get_class($this->model));
         }
 
         // Validation done, Relation exists: Now we can store related object and attach to model
-        $storeJob = ApiJobFactory::store($related);
+        $storeJob     = ApiJobFactory::store($related);
         $relatedModel = $storeJob::dispatchNow($validatedData);
 
         $this->model->$related()->save($relatedModel);

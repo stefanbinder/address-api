@@ -37,11 +37,13 @@ class Country extends ApiModel
     const SEARCHABLE = [
     ];
 
-    public function states() {
+    public function states()
+    {
         return $this->hasMany(State::class);
     }
 
-    public function president() {
+    public function president()
+    {
         return $this->belongsTo(Person::class, 'president_id', 'id');
     }
 

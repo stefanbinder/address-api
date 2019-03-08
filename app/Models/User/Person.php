@@ -15,25 +15,26 @@ class Person extends ApiModel
         'updated_at',
         'deleted_at',
     ];
-    
+
     protected $fillable = [
         'additional_name',
         'given_name',
         'family_name',
         'email',
     ];
-    
+
     const FILTERABLE = [
         'additional_name',
         'given_name',
         'family_name',
         'email',
     ];
-    
+
     const SEARCHABLE = [
     ];
 
-    public function president_of_country() {
+    public function president_of_country()
+    {
         return $this->belongsTo(Country::class, 'id', 'president_id');
     }
 

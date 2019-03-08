@@ -4,14 +4,12 @@ namespace App\Jobs\Api;
 
 use App\Exceptions\Api\Jobs\CouldNotDeleteException;
 use App\Exceptions\Api\ValidationException;
-use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 abstract class DestroyJob implements ShouldQueue
 {
@@ -29,7 +27,7 @@ abstract class DestroyJob implements ShouldQueue
      */
     public function __construct($model)
     {
-        $this->model        = $model;
+        $this->model = $model;
     }
 
     /**
@@ -49,17 +47,17 @@ abstract class DestroyJob implements ShouldQueue
     {
         $model = $this->model;
 
-        if( $model->deleted_at ) {
+        if ($model->deleted_at) {
             return [
                 'meta' => [
-                    'id' => $model->id,
+                    'id'      => $model->id,
                     'message' => 'It was already deleted on ' . $model->deleted_at->toDateTimeString(),
                 ]
             ];
-        } else if( $model->delete() ) {
+        } else if ($model->delete()) {
             return [
                 'meta' => [
-                    'id' => $model->id,
+                    'id'      => $model->id,
                     'message' => 'deleted'
                 ]
             ];
@@ -80,8 +78,6 @@ abstract class DestroyJob implements ShouldQueue
     {
         return $attributes;
     }
-
-
 
 
 }

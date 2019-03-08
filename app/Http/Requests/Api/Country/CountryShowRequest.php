@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\Country;
 
 use App\Http\Requests\Api\ApiRequest;
-use Illuminate\Support\Facades\Request;
 
 class CountryShowRequest extends ApiRequest
 {

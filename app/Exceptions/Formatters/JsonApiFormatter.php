@@ -22,10 +22,10 @@ class JsonApiFormatter extends BaseFormatter
             // 'meta'   => [],
         ];
 
-        if($e instanceof BaseException) {
-           $error['title'] = __($e->getMessage(), $e->getMessageLocalizations());
-           $error['detail'] = __($e->getDetail());
-           $error['code'] = $e->getApiErrorCode();
+        if ($e instanceof BaseException) {
+            $error['title']  = __($e->getMessage(), $e->getMessageLocalizations());
+            $error['detail'] = __($e->getDetail());
+            $error['code']   = $e->getApiErrorCode();
         } else {
             $error['title'] = __($e->getMessage());
         }

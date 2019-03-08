@@ -27,7 +27,7 @@ class ApiResourceFactory
         // Put singular and plural, because namings can be different:
         // ApiModel::ID is always plural, but
         // a Relationship can be named singular, eg. $user->role
-        switch($resourceIdentifier) {
+        switch ($resourceIdentifier) {
             case 'country':
             case 'countries':
                 return new CountryResource($model);
@@ -50,7 +50,7 @@ class ApiResourceFactory
      */
     public static function resourceCollection($resourceIdentifier, $collection)
     {
-        switch($resourceIdentifier) {
+        switch ($resourceIdentifier) {
             case 'country':
             case 'countries':
                 return new CountriesResource($collection);
@@ -76,14 +76,14 @@ class ApiResourceFactory
      */
     public static function resource($resourceIdentifier, $mixed)
     {
-        if( $mixed instanceof ApiModel) {
+        if ($mixed instanceof ApiModel) {
 
             return ApiResourceFactory::resourceObject($mixed::ID, $mixed);
 
-        } else if( $mixed instanceof Countable ) {
+        } else if ($mixed instanceof Countable) {
 
             // Countable should be a list, like Collection, LengthAwarePaginator, Paginator, etc.
-            if(count($mixed) > 0 && $mixed[0] instanceof ApiModel) {
+            if (count($mixed) > 0 && $mixed[0] instanceof ApiModel) {
                 $resourceIdentifier = $mixed[0]::ID;
             }
 

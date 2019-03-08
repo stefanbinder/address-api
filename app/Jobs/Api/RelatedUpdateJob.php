@@ -2,21 +2,13 @@
 
 namespace App\Jobs\Api;
 
-use App\Http\Requests\Api\ApiRequestFactory;
-use App\Http\Requests\Api\State\StateStoreRequest;
-use App\Http\Resources\State\StateResource;
-use App\Jobs\Api\State\StateStoreJob;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 abstract class RelatedUpdateJob implements ShouldQueue
 {

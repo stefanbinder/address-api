@@ -4,12 +4,11 @@ namespace App\Jobs\Api;
 
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class RelationshipIndexJob implements ShouldQueue
 {
@@ -59,7 +58,7 @@ class RelationshipIndexJob implements ShouldQueue
         $identifier_object = $model->get_identifier_object_of_relation($relationship);
 
         $model_name = explode("\\", get_class($model));
-        $model_name = $model_name[ count($model_name) - 1 ];
+        $model_name = $model_name[count($model_name) - 1];
 
         $self_link    = route($model::ID . '.relationship.index', [$model_name => $model->id, 'relationship' => $relationship]);
         $related_link = route($model::ID . '.related.index', [$model_name => $model->id, 'related' => $relationship]);

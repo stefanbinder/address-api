@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Api\Country;
 
-use Illuminate\Contracts\Validation\Rule;
 use App\Http\Requests\Api\ApiRequest;
 
 class CountryStoreRequest extends ApiRequest

@@ -3,22 +3,12 @@
 namespace App\Jobs\Api;
 
 use App\Exceptions\Api\Jobs\NotFoundRelatedException;
-use App\Http\Requests\Api\ApiRequestFactory;
-use App\Http\Requests\Api\State\StateStoreRequest;
-use App\Http\Resources\State\StateResource;
-use App\Jobs\Api\State\StateStoreJob;
-use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 abstract class RelatedDestroyJob implements ShouldQueue
 {
@@ -63,14 +53,14 @@ abstract class RelatedDestroyJob implements ShouldQueue
      */
     public function process()
     {
-        $related = $this->related;
+        $related      = $this->related;
         $relatedModel = $this->model->$related()->withTrashed()->find($this->id);
 
-        if(!$relatedModel) {
+        if (!$relatedModel) {
             throw new NotFoundRelatedException($related, $this->id, $this->model::ID, $this->model->id);
         }
 
-        $destroyJob   = ApiJobFactory::destroy($related);
+        $destroyJob = ApiJobFactory::destroy($related);
         return $destroyJob::dispatchNow($relatedModel);
     }
 

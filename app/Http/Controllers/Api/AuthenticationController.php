@@ -28,7 +28,7 @@ class AuthenticationController extends ApiController
 
         try {
             // attempt to verify the credentials and create a token for the user
-            if (! $token = $auth->attempt($credentials)) {
+            if (!$token = $auth->attempt($credentials)) {
                 throw new InvalidCredentialsException();
             }
         } catch (JWTException $e) {
@@ -46,7 +46,6 @@ class AuthenticationController extends ApiController
         $user = RegisterUser::dispatchNow($request);
 
     }
-
 
 
 }

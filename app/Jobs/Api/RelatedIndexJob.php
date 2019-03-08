@@ -7,12 +7,12 @@ use App\Exceptions\Api\NotImplementedException;
 use App\Http\Resources\ApiResourceFactory;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
 
@@ -60,21 +60,21 @@ abstract class RelatedIndexJob implements ShouldQueue
     {
         $related = $this->related;
 
-        if( ! method_exists($this->model, $related) ) {
+        if (!method_exists($this->model, $related)) {
             throw new NotFoundRelationship($related, get_class($this->model));
         }
 
-        $relation = $this->model->$related();
-        $relationModel = $relation->getModel();
+        $relation       = $this->model->$related();
+        $relationModel  = $relation->getModel();
         $relationObject = $this->model->$related;
 
-        if($relationObject instanceof ApiModel) {
+        if ($relationObject instanceof ApiModel) {
             return ApiResourceFactory::resourceObject($relationModel::ID, $relationObject);
-        } else if( $relationObject instanceof Collection) {
+        } else if ($relationObject instanceof Collection) {
 
             $filter_key = null;
 
-            if($relation instanceof HasOneOrMany) {
+            if ($relation instanceof HasOneOrMany) {
                 $filter_key = $relation->getForeignKeyName();
             } else {
                 throw new NotImplementedException('Missing Implementation of relationship handling! RelatedIndexjob@process');
@@ -87,7 +87,7 @@ abstract class RelatedIndexJob implements ShouldQueue
 //            $relation->getQualifiedParentKeyName()    => countries.id
 //            $relation->getQualifiedForeignKeyName()   => states.country_id
 
-            $all = request()->all();
+            $all   = request()->all();
             $items = ApiJobFactory::index($relationModel::ID, array_merge($all, [
                 'filter' => [
                     $filter_key => $this->model->id,

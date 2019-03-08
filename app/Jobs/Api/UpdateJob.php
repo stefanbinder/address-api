@@ -8,10 +8,10 @@ use App\Exceptions\Api\ValidationException;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 abstract class UpdateJob implements ShouldQueue
 {
@@ -49,7 +49,7 @@ abstract class UpdateJob implements ShouldQueue
      */
     public function process()
     {
-        $model = $this->model;
+        $model          = $this->model;
         $resourceObject = $this->request_data['data'];
 
         if ($this->model::ID !== $resourceObject['type']) {
@@ -59,10 +59,10 @@ abstract class UpdateJob implements ShouldQueue
         $attributes = $this->processAttributes($resourceObject['attributes']);
         $model->update($attributes);
 
-        if( array_key_exists('relationships', $resourceObject) ) {
+        if (array_key_exists('relationships', $resourceObject)) {
             $errors = ProcessRelations::processRelationships($model, $resourceObject['relationships']);
 
-            if( $errors ) {
+            if ($errors) {
                 // TODO: make that exception for showing all collected errors
                 throw new NotImplementedException('Return errors in proper way in UpdateJob@process');
             }
@@ -86,8 +86,6 @@ abstract class UpdateJob implements ShouldQueue
     {
         return $attributes;
     }
-
-
 
 
 }

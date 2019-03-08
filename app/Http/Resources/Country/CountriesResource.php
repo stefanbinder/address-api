@@ -11,12 +11,12 @@ class CountriesResource extends ResourceCollection
     /**
      * Transform the resource collection into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
     {
-        $this->collection->transform(function(Country $country) {
+        $this->collection->transform(function (Country $country) {
             return new CountryResource($country, ResourceObject::DEFAULT_INDEX_EMBEDS);
         });
         return parent::toArray($request);
