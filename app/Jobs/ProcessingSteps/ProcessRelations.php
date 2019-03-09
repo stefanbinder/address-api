@@ -2,6 +2,7 @@
 
 namespace App\Jobs\ProcessingSteps;
 
+use App\Exceptions\Api\Jobs\ValidationException;
 use App\Exceptions\Api\NotImplementedException;
 use App\Exceptions\Api\ResourceObjectTypeError;
 use App\Http\Requests\Api\ApiRequestFactory;
@@ -20,8 +21,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\MessageBag;
-use Illuminate\Validation\ValidationException;
 
 class ProcessRelations
 {
@@ -33,61 +32,52 @@ class ProcessRelations
      *
      * @param ApiModel $model
      * @param $relationships
-     * @return array|null
-     * @throws ResourceObjectTypeError
+     * @return void
+     * @throws NotImplementedException
+     * @throws ValidationException
      */
     public static function processRelationships(ApiModel $model, $relationships)
     {
-
-        $validationErrors = [];
-
         foreach ($relationships as $relationshipId => $resourceData) {
             $relationship = $model->$relationshipId();
-            try {
-                switch (get_class($relationship)) {
-                    case HasOne::class:
-                        self::processRelationshipHasOne($model, $relationship, $resourceData);
-                        break;
-                    case HasMany::class:
-                        self::processRelationshipHasMany($model, $relationship, $resourceData);
-                        break;
-                    case BelongsTo::class:
-                        self::processRelationshipBelongsTo($model, $relationship, $resourceData);
-                        break;
-                    case BelongsToMany::class:
-                        self::processRelationshipBelongsToMany($model, $relationship, $resourceData);
-                        break;
-                    case HasManyThrough::class:
-                        self::processRelationshipHasManyThrough($model, $relationship, $resourceData);
-                        break;
-                    case MorphMany::class:
-                        self::processRelationshipMorphMany($model, $relationship, $resourceData);
-                        break;
-                    case MorphOne::class:
-                        self::processRelationshipMorphOne($model, $relationship, $resourceData);
-                        break;
-                    case MorphPivot::class:
-                        self::processRelationshipMorphPivot($model, $relationship, $resourceData);
-                        break;
-                    case MorphTo::class:
-                        self::processRelationshipMorphTo($model, $relationship, $resourceData);
-                        break;
-                    case MorphToMany::class:
-                        self::processRelationshipMorphToMany($model, $relationship, $resourceData);
-                        break;
-                    case Pivot::class:
-                        self::processRelationshipPivot($model, $relationship, $resourceData);
-                        break;
-                    default:
-                        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not handled by backend');
-                }
-            } catch (ValidationException $e) {
-                $validationErrors = array_merge($validationErrors, $e->errors());
+            switch (get_class($relationship)) {
+                case HasOne::class:
+                    self::processRelationshipHasOne($model, $relationship, $resourceData);
+                    break;
+                case HasMany::class:
+                    self::processRelationshipHasMany($model, $relationship, $resourceData);
+                    break;
+                case BelongsTo::class:
+                    self::processRelationshipBelongsTo($model, $relationship, $resourceData);
+                    break;
+                case BelongsToMany::class:
+                    self::processRelationshipBelongsToMany($model, $relationship, $resourceData);
+                    break;
+                case HasManyThrough::class:
+                    self::processRelationshipHasManyThrough($model, $relationship, $resourceData);
+                    break;
+                case MorphMany::class:
+                    self::processRelationshipMorphMany($model, $relationship, $resourceData);
+                    break;
+                case MorphOne::class:
+                    self::processRelationshipMorphOne($model, $relationship, $resourceData);
+                    break;
+                case MorphPivot::class:
+                    self::processRelationshipMorphPivot($model, $relationship, $resourceData);
+                    break;
+                case MorphTo::class:
+                    self::processRelationshipMorphTo($model, $relationship, $resourceData);
+                    break;
+                case MorphToMany::class:
+                    self::processRelationshipMorphToMany($model, $relationship, $resourceData);
+                    break;
+                case Pivot::class:
+                    self::processRelationshipPivot($model, $relationship, $resourceData);
+                    break;
+                default:
+                    throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not handled by backend');
             }
-
         }
-
-        return count($validationErrors) > 0 ? $validationErrors : null;
     }
 
     /**
@@ -101,16 +91,12 @@ class ProcessRelations
      * @param HasOne $relationship
      * @param $resourceData
      * @return bool
-     * @throws ResourceObjectTypeError
      * @throws ValidationException
+     * @throws NotImplementedException
      */
     public static function processRelationshipHasOne(ApiModel $model, HasOne $relationship, $resourceData)
     {
         $relationModel = self::getAndStoreOrUpdateRelationModel($relationship, $resourceData);
-
-        if (!$relationModel instanceof MessageBag) {
-            return $relationModel;
-        }
 
         if ($relationModel instanceof ApiModel) {
             $relationship->save($relationModel);
@@ -134,8 +120,8 @@ class ProcessRelations
      * @param ApiModel $model
      * @param HasMany $relationship
      * @param $resourceData
-     * @throws ResourceObjectTypeError
      * @throws ValidationException
+     * @throws NotImplementedException
      */
     public static function processRelationshipHasMany(ApiModel $model, HasMany $relationship, $resourceData)
     {
@@ -162,7 +148,7 @@ class ProcessRelations
      * @param BelongsTo $relationship
      * @param $resourceData
      * @return bool
-     * @throws ResourceObjectTypeError
+     * @throws NotImplementedException
      * @throws ValidationException
      */
     public static function processRelationshipBelongsTo(ApiModel $model, BelongsTo $relationship, $resourceData)
@@ -242,17 +228,11 @@ class ProcessRelations
      * @param $type
      * @param $id
      * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|null
-     * @throws ResourceObjectTypeError
      */
-    public static function getRelationModel(Relation $relationship, $type, $id)
+    public static function getModelOfRelationshipWithId(Relation $relationship, $id)
     {
         $relationModelClass = $relationship->getModel();
-
-        if ($type !== $relationModelClass::ID) {
-            throw new ResourceObjectTypeError($type, $relationModelClass::ID);
-        }
-
-        $relationModel = null;
+        $relationModel      = null;
 
         if ($id) {
             $relationModel = $relationModelClass::find($id);
@@ -262,12 +242,14 @@ class ProcessRelations
     }
 
     /**
+     * Gets the model of the relationship and tries to store or update the model with the given $resourceData
+     * The ID is retrieved by $resourceData
+     *
      * @param Relation $relationship
      * @param $resourceData
-     * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|MessageBag|null
-     * @throws ResourceObjectTypeError
+     * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|null
+     * @throws NotImplementedException
      * @throws ValidationException
-     * @throws \App\Exceptions\Api\NotImplementedException
      */
     public static function getAndStoreOrUpdateRelationModel(Relation $relationship, $resourceData)
     {
@@ -278,15 +260,14 @@ class ProcessRelations
         $id   = $resourceData['data']['id'] ?? null;
         $type = $resourceData['data']['type'];
 
-        $relationModel = self::getRelationModel($relationship, $type, $id);
+        $relationModel = self::getModelOfRelationshipWithId($relationship, $id);
 
         if (array_key_exists('attributes', $resourceData['data'])) {
 
             if ($relationModel) {
 
-                // TODO: Refactor to validator
-                $request   = ApiRequestFactory::update($type);
-                $validator = Validator::make($resourceData, (new $request)->rules());
+                $rule      = ApiRequestFactory::rules($type);
+                $validator = Validator::make($resourceData, $rule::update($relationModel));
 
                 if ($validator->fails()) {
                     throw new ValidationException($validator);
@@ -296,9 +277,8 @@ class ProcessRelations
                 $relationModel->update($validatedData['data']['attributes']);
             } else {
 
-                // TODO: Refactor to validator
-                $request   = ApiRequestFactory::store($type);
-                $validator = Validator::make($resourceData, (new $request)->rules());
+                $rule      = ApiRequestFactory::rules($type);
+                $validator = Validator::make($resourceData, $rule::store());
 
                 if ($validator->fails()) {
                     throw new ValidationException($validator);

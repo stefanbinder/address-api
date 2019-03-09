@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Api;
 
+use App\Exceptions\Api\Jobs\NotFoundRelationship;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -57,6 +58,10 @@ abstract class RelatedUpdateJob implements ShouldQueue
     public function process()
     {
         $related = $this->related;
+
+        if( ! method_exists( $this->model, $related ) ) {
+            throw new NotFoundRelationship($related, get_class($this->model));
+        }
 
         $relatedModel = ProcessRelations::getAndStoreOrUpdateRelationModel($this->model->$related(), $this->request_data);
 

@@ -5,16 +5,19 @@ namespace App\Http\Requests\Api;
 use App\Exceptions\Api\NotImplementedException;
 use App\Http\Requests\Api\Country\CountryDestroyRequest;
 use App\Http\Requests\Api\Country\CountryIndexRequest;
+use App\Http\Requests\Api\Country\CountryRules;
 use App\Http\Requests\Api\Country\CountryShowRequest;
 use App\Http\Requests\Api\Country\CountryStoreRequest;
 use App\Http\Requests\Api\Country\CountryUpdateRequest;
 use App\Http\Requests\Api\Person\PersonDestroyRequest;
 use App\Http\Requests\Api\Person\PersonIndexRequest;
+use App\Http\Requests\Api\Person\PersonRules;
 use App\Http\Requests\Api\Person\PersonShowRequest;
 use App\Http\Requests\Api\Person\PersonStoreRequest;
 use App\Http\Requests\Api\Person\PersonUpdateRequest;
 use App\Http\Requests\Api\State\StateDestroyRequest;
 use App\Http\Requests\Api\State\StateIndexRequest;
+use App\Http\Requests\Api\State\StateRules;
 use App\Http\Requests\Api\State\StateShowRequest;
 use App\Http\Requests\Api\State\StateStoreRequest;
 use App\Http\Requests\Api\State\StateUpdateRequest;
@@ -129,6 +132,27 @@ class ApiRequestFactory
                 return PersonDestroyRequest::class;
             default:
                 throw new NotImplementedException("DestroyRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
+        }
+
+    }
+
+    /**
+     * @param $resourceIdentifier
+     * @return string
+     * @throws NotImplementedException
+     */
+    public static function rules($resourceIdentifier)
+    {
+
+        switch ($resourceIdentifier) {
+            case 'countries':
+                return CountryRules::class;
+            case 'states':
+                return StateRules::class;
+            case 'people':
+                return PersonRules::class;
+            default:
+                throw new NotImplementedException("Rules for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
 
     }

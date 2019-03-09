@@ -129,6 +129,7 @@ class RetrieveRelations
      * @param $resourceData
      * @throws ResourceObjectTypeError
      * @throws ValidationException
+     * @throws \App\Exceptions\Api\NotImplementedException
      */
     public static function processRelationshipHasMany(ApiModel $model, HasMany $relationship, $resourceData)
     {
@@ -227,84 +228,6 @@ class RetrieveRelations
     public static function processRelationshipPivot(Model $model, $relationship, $resourceData)
     {
         throw new \Exception('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
-    }
-
-
-    /**
-     * @param Relation $relationship
-     * @param $type
-     * @param $id
-     * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|null
-     * @throws ResourceObjectTypeError
-     */
-    public static function getRelationModel(Relation $relationship, $type, $id)
-    {
-        $relationModelClass = $relationship->getModel();
-
-        if ($type !== $relationModelClass::ID) {
-            throw new ResourceObjectTypeError($type, $relationModelClass::ID);
-        }
-
-        $relationModel = null;
-
-        if ($id) {
-            $relationModel = $relationModelClass::find($id);
-        }
-
-        return $relationModel;
-    }
-
-    /**
-     * @param Relation $relationship
-     * @param $resourceData
-     * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|MessageBag|null
-     * @throws ResourceObjectTypeError
-     * @throws ValidationException
-     * @throws \App\Exceptions\Api\NotImplementedException
-     */
-    public static function getAndStoreOrUpdateRelationModel(Relation $relationship, $resourceData)
-    {
-        // TODO: refactor and make method smaller. Break down into:
-        // storeRelationModel
-        // updateRelationModel
-
-        $id   = $resourceData['data']['id'] ?? null;
-        $type = $resourceData['data']['type'];
-
-        $relationModel = self::getRelationModel($relationship, $type, $id);
-
-        if (array_key_exists('attributes', $resourceData['data'])) {
-
-            if ($relationModel) {
-
-                // TODO: Refactor to validator
-                $request   = ApiRequestFactory::update($type);
-                $validator = Validator::make($resourceData, (new $request)->rules());
-
-                if ($validator->fails()) {
-                    throw new ValidationException($validator);
-                }
-
-                $validatedData = $validator->validate();
-                $relationModel->update($validatedData['data']['attributes']);
-            } else {
-
-                // TODO: Refactor to validator
-                $request   = ApiRequestFactory::store($type);
-                $validator = Validator::make($resourceData, (new $request)->rules());
-
-                if ($validator->fails()) {
-                    throw new ValidationException($validator);
-                }
-
-                $relationModelClass = $relationship->getModel();
-
-                $validatedData = $validator->validate();
-                $relationModel = $relationModelClass::create($validatedData['data']['attributes']);
-            }
-        }
-
-        return $relationModel;
     }
 
 }

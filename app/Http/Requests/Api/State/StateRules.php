@@ -14,7 +14,6 @@ class StateRules
         return [
             'data.type'                  => 'required|in:states',
             'data.attributes.name'       => 'required|string|nullable',
-            'data.attributes.country_id' => 'required|exists:countries,id',
         ];
     }
 
@@ -29,7 +28,6 @@ class StateRules
             'data.id'                    => 'required|exists:countries,id',
             'data.type'                  => 'required|in:states',
             'data.attributes.name'       => 'required|string|nullable',
-            'data.attributes.country_id' => 'required|exists:countries,id',
         ];
     }
 
