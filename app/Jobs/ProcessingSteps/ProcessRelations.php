@@ -3,6 +3,7 @@
 namespace App\Jobs\ProcessingSteps;
 
 use App\Exceptions\Api\Jobs\ValidationException;
+use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\NotImplementedException;
 use App\Exceptions\Api\ResourceObjectTypeError;
 use App\Http\Requests\Api\ApiRequestFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
 class ProcessRelations
@@ -77,68 +79,6 @@ class ProcessRelations
                 default:
                     throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not handled by backend');
             }
-        }
-    }
-
-    /**
-     * @param Relation $relationship
-     * @param $model
-     * @return Model
-     * @throws NotImplementedException
-     */
-    public static function saveOrAssociateModelToRelationship( Relation $relationship, ApiModel $model )
-    {
-        switch (get_class($relationship)) {
-            case HasOne::class:
-            case HasMany::class:
-            case BelongsToMany::class:
-            case MorphMany::class:
-            case MorphOne::class:
-            case MorphToMany::class:
-                return $relationship->save($model);
-                break;
-            case BelongsTo::class:
-            case MorphTo::class:
-                return $relationship->associate($model);
-                break;
-            case HasManyThrough::class:
-            case MorphPivot::class:
-            case Pivot::class:
-                // TODO: implement that
-                throw new NotImplementedException('The pivot relationships are not implemented');
-                break;
-        }
-    }
-
-    /**
-     * @param Relation $relationship
-     * @param $model
-     * @return Model
-     * @throws NotImplementedException
-     */
-    public static function deleteOrDissociateModelToRelationship( Relation $relationship, ApiModel $model )
-    {
-        switch (get_class($relationship)) {
-            case HasMany::class:
-                $model->setAttribute($relationship->getForeignKeyName(), null);
-                $model->save();
-                return $model;
-                break;
-            case BelongsTo::class:
-                return $relationship->dissociate();
-                break;
-            case HasOne::class:
-            case BelongsToMany::class:
-            case MorphMany::class:
-            case MorphOne::class:
-            case MorphToMany::class:
-            case MorphTo::class:
-            case HasManyThrough::class:
-            case MorphPivot::class:
-            case Pivot::class:
-                // TODO: implement that
-                throw new NotImplementedException('The pivot relationships are not implemented');
-                break;
         }
     }
 
@@ -354,6 +294,146 @@ class ProcessRelations
         }
 
         return $relationModel;
+    }
+
+    /**
+     * Takes a Identifier Object and returns the model
+     *
+     * @param ApiModel $eloquent
+     * @param $identifierObject
+     * @return mixed
+     * @throws NotFoundException
+     * @throws ResourceObjectTypeError
+     */
+    public static function getModelFromIO( ApiModel $eloquent, $identifierObject )
+    {
+        $id   = $identifierObject['id'];
+        $type = $identifierObject['type'];
+
+        $model = $eloquent::find($id);
+
+        if (!$model) {
+            throw new NotFoundException(get_class($eloquent), $id);
+        }
+
+        if ($model::ID !== $type) {
+            throw new ResourceObjectTypeError($type, $model::ID);
+        }
+
+        return $model;
+    }
+
+    /**
+     * Takes a relation and Identifier Object and searchs for the model
+     * The model will be attached/saved/associated to the relationship,
+     * depending which type of relation is given.
+     *
+     * @param Relation $relation
+     * @param ApiModel $eloquent
+     * @param $identifierObject
+     * @return Model
+     *
+     * @throws NotFoundException
+     * @throws NotImplementedException
+     * @throws ResourceObjectTypeError
+     */
+    public static function saveOrAssociateEloquentWithIOToRelationship( Relation $relation, ApiModel $eloquent, $identifierObject )
+    {
+        $model = self::getModelFromIO($eloquent, $identifierObject);
+        return self::saveOrAssociateModelToRelationship($relation, $model);
+    }
+
+    /**
+     * Takes a relation and Identifier Object and searchs for the model
+     * The model will be detached/deleted/dissociated to the relationship,
+     * depending which type of relation is given.
+     *
+     * @param Relation $relation
+     * @param ApiModel $eloquent
+     * @param $identifierObject
+     * @return Model
+     * @throws NotFoundException
+     * @throws NotImplementedException
+     * @throws ResourceObjectTypeError
+     */
+    public static function deleteOrDissociateEloquentWithIOToRelationship(Relation $relation, ApiModel $eloquent, $identifierObject )
+    {
+        $model = self::getModelFromIO($eloquent, $identifierObject);
+        return self::deleteOrDissociateModelToRelationship($relation, $model);
+    }
+
+    /**
+     * Takes a relation and attachs/saves/associate the model to the relationship,
+     * depending which type of relation is given.
+     *
+     * @param Relation $relation
+     * @param ApiModel $model
+     * @return ApiModel|null
+     * @throws NotImplementedException
+     */
+    public static function saveOrAssociateModelToRelationship( Relation $relation, ApiModel $model )
+    {
+        switch (get_class($relation)) {
+            case HasOne::class:
+            case HasMany::class:
+            case BelongsToMany::class:
+            case MorphMany::class:
+            case MorphOne::class:
+            case MorphToMany::class:
+                $relation->save($model);
+                return $model;
+            case BelongsTo::class:
+            case MorphTo::class:
+                $relation->associate($model);
+                return $model;
+            case HasManyThrough::class:
+            case MorphPivot::class:
+            case Pivot::class:
+                // TODO: implement that
+                throw new NotImplementedException('The pivot relationships are not implemented');
+                break;
+        }
+
+        return null;
+    }
+
+    /**
+     * Takes a relation and deletes/detaches/dissociate the model to the relationship,
+     * depending which type of relation is given.
+     *
+     * @param Relation $relationship
+     * @param $model
+     * @return Model
+     * @throws NotImplementedException
+     */
+    public static function deleteOrDissociateModelToRelationship( Relation $relationship, ApiModel $model )
+    {
+        switch (get_class($relationship)) {
+            case HasMany::class:
+                // BelongsTo is the other side of relation, therefore the foreign_key is stored in given ApiModel
+                $model->setAttribute($relationship->getForeignKeyName(), null);
+                $model->save();
+                return $model;
+                break;
+            case BelongsTo::class:
+                return $relationship->dissociate();
+                break;
+            case HasOne::class:
+            case BelongsToMany::class:
+            case MorphMany::class:
+            case MorphOne::class:
+            case MorphToMany::class:
+            case MorphTo::class:
+            case HasManyThrough::class:
+            case MorphPivot::class:
+            case Pivot::class:
+                // TODO: implement that
+                throw new NotImplementedException('The pivot relationships are not implemented');
+                break;
+        }
+
+        return null;
+
     }
 
 }

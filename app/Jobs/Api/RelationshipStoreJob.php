@@ -2,8 +2,7 @@
 
 namespace App\Jobs\Api;
 
-use App\Exceptions\Api\NotFoundException;
-use App\Exceptions\Api\ResourceObjectTypeError;
+use App\Exceptions\Api\Jobs\ArrayNotAssignableToRelation;
 use App\Jobs\ProcessingSteps\ProcessRelations;
 use App\Models\ApiModel;
 use Illuminate\Bus\Queueable;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class RelationshipStoreJob implements ShouldQueue
 {
@@ -60,35 +60,39 @@ class RelationshipStoreJob implements ShouldQueue
     {
         $model        = $this->model;
         $relationship = $this->relationship;
+        $data         = $this->resourceData['data'];
 
-        $id   = $this->resourceData['data']['id'];
-        $type = $this->resourceData['data']['type'];
+        $relation     = $model->$relationship();
+        $eloquent     = $relation->getModel();
 
-        $relationshipObject   = $model->$relationship();
-        $relationshipEloquent = $relationshipObject->getModel();
+        $response = ['data' => [] ];
 
-        if ($relationshipEloquent::ID !== $type) {
-            throw new ResourceObjectTypeError($type, $relationshipEloquent::ID);
+        if ( is_identifier_object($data)) {
+            $relationshipModel = ProcessRelations::saveOrAssociateEloquentWithIOToRelationship($relation, $eloquent, $data);
+            $response['data'] = $relationshipModel->get_identifier_object();
+        } else {
+
+            $currentData  = $relation->getResults();
+            if( ! $currentData instanceof Collection ) {
+                // Array given by requester, relation is NOT a list => can't assign a proper value
+                throw new ArrayNotAssignableToRelation();
+            }
+
+            $response['data'] = [];
+
+            foreach ($data as $dataItem) {
+                if(is_identifier_object($dataItem)) {
+                    $relationshipModel = ProcessRelations::saveOrAssociateEloquentWithIOToRelationship($relation, $eloquent, $dataItem);
+                    array_push($response['data'], $relationshipModel->get_identifier_object());
+                }
+            }
         }
 
-        $relationshipModel = $relationshipEloquent::find($id);
-
-        if (!$relationshipModel) {
-            throw new NotFoundException(get_class($relationshipEloquent), $id);
-        }
-
-        ProcessRelations::saveOrAssociateModelToRelationship($relationshipObject, $relationshipModel);
         $model->push();
 
-        $relationships = [
-            'data' => [
-                'id'   => $id,
-                'type' => $type,
-            ],
-        ];
-
-        return $relationships;
+        return $response;
     }
+
 
 
 }

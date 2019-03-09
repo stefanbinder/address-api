@@ -100,3 +100,17 @@ if (!function_exists('build_basic_api_routes')) {
         )->name("$snpl.related.destroy");
     }
 }
+
+if (!function_exists('is_identifier_object')) {
+
+    /**
+     * Checks whether the given array is an Identifier Object (contains ID & type)
+     *
+     * @param $data
+     * @return boolean
+     */
+    function is_identifier_object($data)
+    {
+        return array_key_exists('id', $data) && array_key_exists('type', $data);
+    }
+}

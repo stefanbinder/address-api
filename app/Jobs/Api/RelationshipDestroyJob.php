@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Api;
 
+use App\Exceptions\Api\Jobs\ArrayNotAssignableToRelation;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\NotImplementedException;
 use App\Exceptions\Api\ResourceObjectTypeError;
@@ -25,6 +26,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class RelationshipDestroyJob implements ShouldQueue
 {
@@ -74,17 +76,31 @@ class RelationshipDestroyJob implements ShouldQueue
 
         $model        = $this->model;
         $relationship = $this->relationship;
+        $data         = $this->resourceData['data'];
 
-        $data = $this->resourceData['data'];
+        $relation     = $model->$relationship();
+        $eloquent     = $relation->getModel();
 
-        $relationshipObject   = $model->$relationship();
-        $relationshipEloquent = $relationshipObject->getModel();
+        $response = ['data' => [] ];
 
-        if (array_key_exists('id', $data) && array_key_exists('type', $data)) {
-            $this->deleteOrDissociateWithModel($relationshipObject, $relationshipEloquent, $data);
+        if ( is_identifier_object($data)) {
+            $relationshipModel = ProcessRelations::deleteOrDissociateEloquentWithIOToRelationship($relation, $eloquent, $data);
+            $response['data'] = $relationshipModel->get_identifier_object();
         } else {
-            foreach ($data as $singleData) {
-                $model = $this->deleteOrDissociateWithModel($relationshipObject, $relationshipEloquent, $singleData);
+
+            $currentData  = $relation->getResults();
+            if( ! $currentData instanceof Collection ) {
+                // Array given by requester, relation is NOT a list => can't assign a proper value
+                throw new ArrayNotAssignableToRelation();
+            }
+
+            $response['data'] = [];
+
+            foreach ($data as $dataItem) {
+                if(is_identifier_object($dataItem)) {
+                    $relationshipModel = ProcessRelations::deleteOrDissociateEloquentWithIOToRelationship($relation, $eloquent, $dataItem);
+                    array_push($response['data'], $relationshipModel->get_identifier_object());
+                }
             }
         }
 
@@ -95,33 +111,6 @@ class RelationshipDestroyJob implements ShouldQueue
                 'message' => 'Successful disconnected the objects'
             ]
         ];
-    }
-
-    /**
-     * @param Relation $relation
-     * @param Model $model
-     * @param $data
-     * @return Model
-     * @throws NotFoundException
-     * @throws ResourceObjectTypeError
-     * @throws \App\Exceptions\Api\NotImplementedException
-     */
-    private function deleteOrDissociateWithModel(Relation $relation, Model $model, $data)
-    {
-        $id   = $data['id'];
-        $type = $data['type'];
-
-        if ($model::ID !== $type) {
-            throw new ResourceObjectTypeError($type, $model::ID);
-        }
-
-        $relationshipModel = $model::find($id);
-
-        if (!$relationshipModel) {
-            throw new NotFoundException(get_class($model), $id);
-        }
-
-        return ProcessRelations::deleteOrDissociateModelToRelationship($relation, $relationshipModel);
     }
 
 }

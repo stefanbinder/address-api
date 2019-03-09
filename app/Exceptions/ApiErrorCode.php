@@ -23,8 +23,10 @@ class ApiErrorCode
 
     const AUTH_TOKEN_EXPIRED = 312;
 
-    const VALIDATION_ERROR = 500;
-    const COULD_NOT_DELETE = 1000;
+    const VALIDATION_ERROR                 = 500;
+
+    const COULD_NOT_DELETE                 = 1000;
+    const ARRAY_NOT_ASSIGNABLE_TO_RELATION = 1001;
 
 
 }

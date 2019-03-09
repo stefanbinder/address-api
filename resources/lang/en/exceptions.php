@@ -27,6 +27,7 @@ return [
 
     'jobs' => [
         'could_not_delete' => 'Could not delete the object',
+        'array_not_assignable_to_relation' => 'The given data is an array, which is not assignable to a relation which is not a list.',
     ]
 
 ];
