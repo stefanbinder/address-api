@@ -63,18 +63,13 @@ if (!function_exists('build_basic_api_routes')) {
             "Api\\$sica\\${sica}RelationshipController@store"
         )->name("$snpl.relationship.store");
 
-        Illuminate\Support\Facades\Route::get(
-            "$snpl/{{$silo}}/relationships/{relationship}/{id}",
-            "Api\\$sica\\${sica}RelationshipController@show"
-        )->name("$snpl.relationship.show");
-
         Illuminate\Support\Facades\Route::put(
-            "$snpl/{{$silo}}/relationships/{relationship}/{id}",
+            "$snpl/{{$silo}}/relationships/{relationship}",
             "Api\\$sica\\${sica}RelationshipController@update"
         )->name("$snpl.relationship.update");
 
         Illuminate\Support\Facades\Route::delete(
-            "$snpl/{{$silo}}/relationships/{relationship}/{id}",
+            "$snpl/{{$silo}}/relationships/{relationship}",
             "Api\\$sica\\${sica}RelationshipController@destroy"
         )->name("$snpl.relationship.destroy");
 

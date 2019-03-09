@@ -81,6 +81,68 @@ class ProcessRelations
     }
 
     /**
+     * @param Relation $relationship
+     * @param $model
+     * @return Model
+     * @throws NotImplementedException
+     */
+    public static function saveOrAssociateModelToRelationship( Relation $relationship, ApiModel $model )
+    {
+        switch (get_class($relationship)) {
+            case HasOne::class:
+            case HasMany::class:
+            case BelongsToMany::class:
+            case MorphMany::class:
+            case MorphOne::class:
+            case MorphToMany::class:
+                return $relationship->save($model);
+                break;
+            case BelongsTo::class:
+            case MorphTo::class:
+                return $relationship->associate($model);
+                break;
+            case HasManyThrough::class:
+            case MorphPivot::class:
+            case Pivot::class:
+                // TODO: implement that
+                throw new NotImplementedException('The pivot relationships are not implemented');
+                break;
+        }
+    }
+
+    /**
+     * @param Relation $relationship
+     * @param $model
+     * @return Model
+     * @throws NotImplementedException
+     */
+    public static function deleteOrDissociateModelToRelationship( Relation $relationship, ApiModel $model )
+    {
+        switch (get_class($relationship)) {
+            case HasMany::class:
+                $model->setAttribute($relationship->getForeignKeyName(), null);
+                $model->save();
+                return $model;
+                break;
+            case BelongsTo::class:
+                return $relationship->dissociate();
+                break;
+            case HasOne::class:
+            case BelongsToMany::class:
+            case MorphMany::class:
+            case MorphOne::class:
+            case MorphToMany::class:
+            case MorphTo::class:
+            case HasManyThrough::class:
+            case MorphPivot::class:
+            case Pivot::class:
+                // TODO: implement that
+                throw new NotImplementedException('The pivot relationships are not implemented');
+                break;
+        }
+    }
+
+    /**
      * Process hasOne relationship
      *
      * 1:1
