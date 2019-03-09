@@ -23,10 +23,7 @@ class StateStoreRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            'data.type'            => 'required',
-            'data.attributes.name' => 'required|string|nullable',
-        ];
+        return StateRules::store();
     }
 
 }

@@ -23,8 +23,6 @@ class CountryIndexRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        return CountryRules::index();
     }
 }

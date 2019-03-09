@@ -23,7 +23,6 @@ class CountryShowRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-        ];
+        return CountryRules::show($this->route('country'));
     }
 }

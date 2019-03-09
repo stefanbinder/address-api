@@ -23,7 +23,6 @@ class StateShowRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-        ];
+        return StateRules::show($this->route('state'));
     }
 }

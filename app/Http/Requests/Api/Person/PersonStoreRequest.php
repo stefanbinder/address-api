@@ -23,12 +23,7 @@ class PersonStoreRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            'data.type'                   => 'required',
-            'data.attributes.given_name'  => 'required|string',
-            'data.attributes.family_name' => 'required',
-            'data.attributes.email'       => 'required|email',
-        ];
+        return PersonRules::store();
     }
 
 }

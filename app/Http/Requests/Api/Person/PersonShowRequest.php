@@ -23,7 +23,6 @@ class PersonShowRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-        ];
+        return PersonRules::show($this->route('person'));
     }
 }

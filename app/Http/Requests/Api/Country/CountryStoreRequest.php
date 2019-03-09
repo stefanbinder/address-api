@@ -24,16 +24,7 @@ class CountryStoreRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            'data.type'                    => 'required',
-            'data.attributes.name'         => 'required|string',
-            'data.attributes.code'         => 'required',
-            'data.attributes.inhabitants'  => '',
-            'data.attributes.founded_at'   => '',
-            'data.attributes.some_time'    => '',
-            'data.attributes.last_visited' => '',
-            'data.relationships'           => '',
-        ];
+        return CountryRules::store();
     }
 
 }

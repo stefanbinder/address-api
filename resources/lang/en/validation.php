@@ -125,8 +125,8 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'data.type' => [
+            'in' => 'The :attribute is invalid.',
         ],
     ],
 

@@ -23,9 +23,6 @@ class StateUpdateRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            'data.type'            => 'required',
-            'data.attributes.name' => 'required|string',
-        ];
+        return StateRules::update($this->route('state'));
     }
 }

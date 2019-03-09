@@ -23,8 +23,6 @@ class PersonIndexRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        return PersonRules::index();
     }
 }

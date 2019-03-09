@@ -23,8 +23,6 @@ class StateIndexRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        return StateRules::index();
     }
 }

@@ -19,8 +19,8 @@ class JsonApiValidationFormatter extends BaseFormatter
             foreach ($validator->errors()->getMessages() as $key => $error) {
 
                 $validation_error = [
-                    'title'  => __($e->getMessage()),
-                    'detail' => implode(" ", $error),
+                    'title'  => implode(" ", $error),
+                    'detail' => '',
                     'source' => ['pointer' => $key],
                     'status' => $e->getCode(),
                     'code'   => $e->getApiErrorCode(),

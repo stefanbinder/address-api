@@ -23,8 +23,6 @@ class PersonDestroyRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        return PersonRules::destroy($this->route('person'));
     }
 }

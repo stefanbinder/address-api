@@ -23,8 +23,6 @@ class CountryDestroyRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        return CountryRules::destroy($this->route('country'));
     }
 }

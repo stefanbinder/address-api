@@ -23,8 +23,6 @@ class StateDestroyRequest extends ApiRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        return StateRules::destroy($this->route('state'));
     }
 }
