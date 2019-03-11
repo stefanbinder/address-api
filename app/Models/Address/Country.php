@@ -3,6 +3,8 @@
 namespace App\Models\Address;
 
 use App\Models\ApiModel;
+use App\Models\Media\Media;
+use App\Models\Tag;
 use App\Models\User\Person;
 
 class Country extends ApiModel
@@ -45,6 +47,21 @@ class Country extends ApiModel
     public function president()
     {
         return $this->belongsTo(Person::class, 'president_id', 'id');
+    }
+
+    public function vendors()
+    {
+        return $this->belongsToMany(Vendor::class);
+    }
+
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'mediaable');
+    }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'tagable');
     }
 
 }

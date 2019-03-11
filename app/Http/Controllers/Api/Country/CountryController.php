@@ -18,11 +18,6 @@ use App\Models\Address\Country;
 class CountryController extends ApiController
 {
 
-    public function __construct()
-    {
-        $this->middleware('api.auth');
-    }
-
     public function index(CountryIndexRequest $request)
     {
         $countries = CountryIndexJob::dispatchNow($request->all());
@@ -41,7 +36,6 @@ class CountryController extends ApiController
         $data     = $request->validated();
         $country  = CountryStoreJob::dispatchNow($data);
         $resource = ApiResourceFactory::resourceObject("country", $country);
-
         return $this->response($resource);
     }
 
@@ -50,7 +44,6 @@ class CountryController extends ApiController
         $data     = $request->validated();
         $country  = CountryUpdateJob::dispatchNow($country, $data);
         $resource = ApiResourceFactory::resourceObject("country", $country);
-
         return $this->response($resource);
     }
 

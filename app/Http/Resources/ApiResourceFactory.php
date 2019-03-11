@@ -5,10 +5,16 @@ namespace App\Http\Resources;
 use App\Exceptions\Api\NotImplementedException;
 use App\Http\Resources\Country\CountriesResource;
 use App\Http\Resources\Country\CountryResource;
+use App\Http\Resources\Media\MediaResource;
+use App\Http\Resources\Media\MediasResource;
 use App\Http\Resources\Person\PeopleResource;
 use App\Http\Resources\Person\PersonResource;
 use App\Http\Resources\State\StateResource;
 use App\Http\Resources\State\StatesResource;
+use App\Http\Resources\Tag\TagResource;
+use App\Http\Resources\Tag\TagsResource;
+use App\Http\Resources\Vendor\VendorResource;
+use App\Http\Resources\Vendor\VendorsResource;
 use App\Models\ApiModel;
 use Countable;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -37,6 +43,15 @@ class ApiResourceFactory
             case 'person':
             case 'people':
                 return new PersonResource($model);
+            case 'vendor':
+            case 'vendors':
+                return new VendorResource($model);
+            case 'tag':
+            case 'tags':
+                return new TagResource($model);
+            case 'media':
+            case 'medias':
+                return new MediaResource($model);
             default:
                 throw new NotImplementedException("ResourceObject for '$resourceIdentifier' is not defined in ApiResourceFactory");
         }
@@ -60,6 +75,16 @@ class ApiResourceFactory
             case 'person':
             case 'people':
                 return new PeopleResource($collection);
+            case 'vendor':
+            case 'vendors':
+                return new VendorsResource($collection);
+            case 'tag':
+            case 'tags':
+                return new TagsResource($collection);
+            case 'media':
+            case 'medias':
+                return new MediasResource($collection);
+
             default:
                 throw new NotImplementedException("ResourceCollection for '$resourceIdentifier' is not defined in ApiResourceFactory");
         }

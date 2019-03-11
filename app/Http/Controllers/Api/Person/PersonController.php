@@ -22,7 +22,6 @@ class PersonController extends ApiController
     {
         $people   = PersonIndexJob::dispatchNow($request->all());
         $resource = ApiResourceFactory::resourceCollection("people", $people);
-
         return $this->response($resource);
     }
 
@@ -37,7 +36,6 @@ class PersonController extends ApiController
         $data     = $request->validated();
         $person   = PersonStoreJob::dispatchNow($data);
         $resource = ApiResourceFactory::resourceObject("person", $person);
-
         return $this->response($resource);
     }
 
@@ -46,12 +44,12 @@ class PersonController extends ApiController
         $data     = $request->validated();
         $person   = PersonUpdateJob::dispatchNow($person, $data);
         $resource = ApiResourceFactory::resourceObject("person", $person);
-
         return $this->response($resource);
     }
 
-    public function destroy(PersonDestroyRequest $request, Person $person)
+    public function destroy(PersonDestroyRequest $request, $person)
     {
+        $person = Person::withTrashed()->find($person);
         $person = PersonDestroyJob::dispatchNow($person);
         return $this->response($person);
     }

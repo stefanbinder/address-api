@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Media;
 
 use App\Models\Address\Country;
 use App\Models\Address\State;
+use App\Models\ApiModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Tag extends ApiModel
+class Media extends ApiModel
 {
 
-    const ID = 'tags';
+    const ID = 'media';
 
     use SoftDeletes;
 
@@ -17,12 +18,14 @@ class Tag extends ApiModel
         'created_at',
         'updated_at',
         'deleted_at',
-        'founded_at',
-        'last_visited',
     ];
 
     protected $fillable = [
         'name',
+        'url',
+        'filename',
+        'title',
+        'type',
     ];
 
     const FILTERABLE = [
@@ -32,14 +35,14 @@ class Tag extends ApiModel
     ];
 
 
-    public function countries()
+    public function country()
     {
-        return $this->morphedByMany(Country::class, 'tagable');
+        return $this->morphTo(Country::class);
     }
 
-    public function states()
+    public function state()
     {
-        return $this->morphedByMany(State::class, 'tagable');
+        return $this->morphTo(State::class);
     }
 
 }

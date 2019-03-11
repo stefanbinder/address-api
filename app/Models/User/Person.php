@@ -35,7 +35,7 @@ class Person extends ApiModel
 
     public function president_of_country()
     {
-        return $this->belongsTo(Country::class, 'id', 'president_id');
+        return $this->hasOne(Country::class, 'president_id');
     }
 
 }

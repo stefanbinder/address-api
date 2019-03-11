@@ -22,7 +22,6 @@ class StateController extends ApiController
     {
         $states   = StateIndexJob::dispatchNow($request->all());
         $resource = ApiResourceFactory::resourceCollection("states", $states);
-
         return $this->response($resource);
     }
 
@@ -37,7 +36,6 @@ class StateController extends ApiController
         $data     = $request->validated();
         $state    = StateStoreJob::dispatchNow($data);
         $resource = ApiResourceFactory::resourceObject("state", $state);
-
         return $this->response($resource);
     }
 
@@ -46,12 +44,12 @@ class StateController extends ApiController
         $data     = $request->validated();
         $state    = StateUpdateJob::dispatchNow($state, $data);
         $resource = ApiResourceFactory::resourceObject("state", $state);
-
         return $this->response($resource);
     }
 
-    public function destroy(StateDestroyRequest $request, State $state)
+    public function destroy(StateDestroyRequest $request, $state)
     {
+        $state = State::withTrashed()->find($state);
         $state = StateDestroyJob::dispatchNow($state);
         return $this->response($state);
     }

@@ -13,12 +13,6 @@ use Illuminate\Http\Request;
 class CountryRelationshipController extends ApiController
 {
 
-    /**
-     * @param Request $request
-     * @param Country $country
-     * @param $relationship
-     * @return mixed
-     */
     public function index(Request $request, Country $country, $relationship)
     {
         $relationships = RelationshipIndexJob::dispatchNow($country, $relationship);

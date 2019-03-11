@@ -50,5 +50,4 @@ class CountryRelatedController extends ApiController
         return $this->response($country);
     }
 
-
 }
