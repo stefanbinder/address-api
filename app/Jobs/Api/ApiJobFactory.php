@@ -58,25 +58,26 @@ class ApiJobFactory
     /**
      * @param $resourceIdentifier
      * @param $data
+     * @param null $query
      * @return mixed
      * @throws NotImplementedException
      */
-    public static function index($resourceIdentifier, $data)
+    public static function index($resourceIdentifier, $data, $query=null)
     {
 
         switch ($resourceIdentifier) {
             case 'countries':
-                return CountryIndexJob::dispatchNow($data);
+                return CountryIndexJob::dispatchNow($data, $query);
             case 'states':
-                return StateIndexJob::dispatchNow($data);
+                return StateIndexJob::dispatchNow($data, $query);
             case 'people':
-                return PersonIndexJob::dispatchNow($data);
+                return PersonIndexJob::dispatchNow($data, $query);
             case 'vendors':
-                return VendorIndexJob::dispatchNow($data);
+                return VendorIndexJob::dispatchNow($data, $query);
             case 'tags':
-                return TagIndexJob::dispatchNow($data);
+                return TagIndexJob::dispatchNow($data, $query);
             case 'media':
-                return MediaIndexJob::dispatchNow($data);
+                return MediaIndexJob::dispatchNow($data, $query);
             default:
                 throw new NotImplementedException("IndexJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }

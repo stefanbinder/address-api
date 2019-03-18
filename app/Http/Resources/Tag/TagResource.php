@@ -9,7 +9,7 @@ use App\Models\Tag;
 class TagResource extends ResourceObject
 {
 
-    protected function get_model()
+    public function get_model()
     {
         return Tag::class;
     }

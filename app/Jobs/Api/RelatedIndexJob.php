@@ -10,6 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -65,36 +66,33 @@ abstract class RelatedIndexJob implements ShouldQueue
         }
 
         $relation       = $this->model->$related();
-        $relationModel  = $relation->getModel();
+        $eloquent       = $relation->getModel();
         $relationObject = $this->model->$related;
 
-        if ($relationObject instanceof ApiModel) {
-            return ApiResourceFactory::resourceObject($relationModel::ID, $relationObject);
-        } else if ($relationObject instanceof Collection) {
+        /**
+         * If the $relation is toMany, we always get a collection, which means first condition is accurate.
+         * If the $relation is toOne, we either get the model of instance ApiModel OR null
+         *      - so either return the resourceObject
+         *      - or return null
+         *
+         * https://jsonapi.org/format/#fetching-relationships
+         */
 
-            $filter_key = null;
-
-            if ($relation instanceof HasOneOrMany) {
-                $filter_key = $relation->getForeignKeyName();
-            } else {
-                throw new NotImplementedException('Missing Implementation of relationship handling! RelatedIndexjob@process');
-            }
-
-            // TODO: many to many will be interesting
-//            $relation->getParentKey()                 => 1
-//            $relation->getForeignKeyName()            => country_id
-//            $relation->getExistenceCompareKey()       => states.country_id
-//            $relation->getQualifiedParentKeyName()    => countries.id
-//            $relation->getQualifiedForeignKeyName()   => states.country_id
+        if ($relationObject instanceof Collection) {
 
             $all   = request()->all();
-            $items = ApiJobFactory::index($relationModel::ID, array_merge($all, [
-                'filter' => [
-                    $filter_key => $this->model->id,
-                ]
-            ]));
+            $items = ApiJobFactory::index($eloquent::ID, $all, $relation->getQuery());
 
-            return ApiResourceFactory::resourceCollection($relationModel::ID, $items);
+            return ApiResourceFactory::resourceCollection($eloquent::ID, $items);
+        } else if ($relationObject instanceof ApiModel) {
+            return ApiResourceFactory::resourceObject($eloquent::ID, $relationObject);
+        } else {
+
+            // TODO: Put somewhere in a LinksHelper
+
+            return [
+                'data' => null,
+            ];
         }
 
     }

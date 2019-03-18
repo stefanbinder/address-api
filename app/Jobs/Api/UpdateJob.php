@@ -60,12 +60,7 @@ abstract class UpdateJob implements ShouldQueue
         $model->update($attributes);
 
         if (array_key_exists('relationships', $resourceObject)) {
-            $errors = ProcessRelations::processRelationships($model, $resourceObject['relationships']);
-
-            if ($errors) {
-                // TODO: make that exception for showing all collected errors
-                throw new NotImplementedException('Return errors in proper way in UpdateJob@process');
-            }
+            ProcessRelations::processRelationships($model, $resourceObject['relationships']);
         }
 
         $model->save();

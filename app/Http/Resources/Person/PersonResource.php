@@ -9,7 +9,7 @@ use App\Models\User\Person;
 class PersonResource extends ResourceObject
 {
 
-    protected function get_model()
+    public function get_model()
     {
         return Person::class;
     }

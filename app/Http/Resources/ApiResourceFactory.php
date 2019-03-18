@@ -17,7 +17,7 @@ use App\Http\Resources\Vendor\VendorResource;
 use App\Http\Resources\Vendor\VendorsResource;
 use App\Models\ApiModel;
 use Countable;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+
 
 class ApiResourceFactory
 {

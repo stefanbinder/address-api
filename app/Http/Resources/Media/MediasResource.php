@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Media;
 
+use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceObject;
 use App\Models\Media\Media;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class MediasResource extends ResourceCollection
 {

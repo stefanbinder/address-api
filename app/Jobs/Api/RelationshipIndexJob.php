@@ -55,7 +55,9 @@ class RelationshipIndexJob implements ShouldQueue
         $model        = $this->model;
         $relationship = $this->relationship;
 
-        $identifier_object = $model->get_identifier_object_of_relation($relationship) ?? [];
+        $identifier_object = $model->get_identifier_object_of_relation($relationship);
+
+        // TODO: Put somewhere in a LinksHelper
 
         $model_name = explode("\\", get_class($model));
         $model_name = $model_name[count($model_name) - 1];

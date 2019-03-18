@@ -9,7 +9,7 @@ use App\Models\Media\Media;
 class MediaResource extends ResourceObject
 {
 
-    protected function get_model()
+    public function get_model()
     {
         return Media::class;
     }

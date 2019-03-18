@@ -9,7 +9,7 @@ use App\Models\Address\Country;
 class CountryResource extends ResourceObject
 {
 
-    protected function get_model()
+    public function get_model()
     {
         return Country::class;
     }

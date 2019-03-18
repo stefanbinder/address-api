@@ -2,12 +2,11 @@
 
 namespace App\Http\Resources;
 
+use App\Exceptions\Api\Jobs\NotFoundRelatedException;
 use App\Jobs\Api\ApiJobFactory;
 use App\Jobs\Api\RelationshipIndexJob;
 use App\Models\ApiModel;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 abstract class ResourceObject extends JsonResource
@@ -16,20 +15,21 @@ abstract class ResourceObject extends JsonResource
     public const EMBED_LINKS         = 'links';
     public const EMBED_ATTRIBUTES    = 'attributes';
     public const EMBED_RELATIONSHIPS = 'relationships';
-    public const EMBED_INCLUDES      = 'includes';
+    public const EMBED_INCLUDED      = 'included';
     public const EMBED_META          = 'meta';
 
     public const DEFAULT_INDEX_EMBEDS = [
         self::EMBED_LINKS,
         self::EMBED_ATTRIBUTES,
-        self::EMBED_INCLUDES,
+        self::EMBED_RELATIONSHIPS,
+        self::EMBED_INCLUDED,
     ];
 
     public const DEFAULT_EMBEDS = [
         self::EMBED_LINKS,
         self::EMBED_ATTRIBUTES,
         self::EMBED_RELATIONSHIPS,
-        self::EMBED_INCLUDES,
+        self::EMBED_INCLUDED,
         self::EMBED_META,
     ];
 
@@ -69,7 +69,7 @@ abstract class ResourceObject extends JsonResource
      *
      * @return ApiModel
      */
-    abstract protected function get_model();
+    abstract public function get_model();
 
     /**
      * Set the default fields which are returned by the index-method
@@ -101,6 +101,23 @@ abstract class ResourceObject extends JsonResource
      */
     abstract protected function get_relationship($relationship, $request_data);
 
+    public function with($request)
+    {
+        $with = [];
+
+        if (in_array(self::EMBED_LINKS, $this->embed)) {
+            $with['links'] = $this->build_links();
+        }
+        if (in_array(self::EMBED_INCLUDED, $this->embed)) {
+            $with['included'] = $this->build_included($request);
+        }
+        if (in_array(self::EMBED_META, $this->embed)) {
+            $with['meta'] = $this->build_meta($request);
+        }
+
+        return $with;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -123,20 +140,11 @@ abstract class ResourceObject extends JsonResource
             'type' => $this->model_name_plural,
         ];
 
-        if (in_array(self::EMBED_LINKS, $this->embed)) {
-            $resource_object['links'] = $this->build_links();
-        }
         if (in_array(self::EMBED_ATTRIBUTES, $this->embed)) {
             $resource_object['attributes'] = $this->build_attributes($request);
         }
         if (in_array(self::EMBED_RELATIONSHIPS, $this->embed)) {
             $resource_object['relationships'] = $this->build_relationships();
-        }
-        if (in_array(self::EMBED_INCLUDES, $this->embed)) {
-            $resource_object['includes'] = $this->build_includes($request);
-        }
-        if (in_array(self::EMBED_META, $this->embed)) {
-            $resource_object['meta'] = $this->build_meta($request);
         }
 
         return $resource_object;
@@ -161,9 +169,9 @@ abstract class ResourceObject extends JsonResource
      * @return array
      * @throws \Exception
      */
-    protected function build_includes($request)
+    protected function build_included($request)
     {
-        $include_data = [];
+        $include_data = collect();
 
         // See TransformIncludeAndFieldsParams Middleware, there include is prepared and manipulated
         $include_param = $request->input('include', []);
@@ -172,23 +180,27 @@ abstract class ResourceObject extends JsonResource
             return $include_data;
         }
 
-        $includes = explode(",", $include_param[$this->model::ID]);
+        $included = explode(",", $include_param[$this->model::ID]);
 
-        foreach ($includes as $include) {
+        foreach ($included as $include) {
+
+            if( !method_exists($this->model, $include )) {
+                throw new NotFoundRelatedException($include, null, $this->model, null);
+            }
 
             $relatedIndexJob = ApiJobFactory::relatedIndex($this->model::ID);
             $to_include      = $relatedIndexJob::dispatchNow([], $this->resource, $include);
 
             if ($to_include instanceof ResourceCollection) {
-                $to_include = $to_include->toArray($request);
-            }
+                $include_data = $include_data->merge($to_include);
+            } else {
 
-            if (is_array($to_include)) {
-                $include_data = array_merge($include_data, $to_include);
-            } else if ($to_include instanceof Collection) {
-                $include_data = array_merge($include_data, $to_include->toArray());
-            } else if ($to_include) {
-                array_push($include_data, $to_include);
+                // We retrieve related data, if related data does not exists, an data-null array is returned.
+                // Do not include empty arrays with data-null objects
+                if( ! (array_key_exists('data', $to_include) && $to_include['data'] === null ) ) {
+                    $include_data = $include_data->push($to_include);
+                }
+
             }
 
         }

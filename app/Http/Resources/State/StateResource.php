@@ -9,7 +9,7 @@ use App\Models\Address\State;
 class StateResource extends ResourceObject
 {
 
-    protected function get_model()
+    public function get_model()
     {
         return State::class;
     }

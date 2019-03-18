@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Person;
 
+use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceObject;
 use App\Models\User\Person;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PeopleResource extends ResourceCollection
 {

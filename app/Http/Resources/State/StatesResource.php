@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\State;
 
+use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceObject;
 use App\Models\Address\State;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class StatesResource extends ResourceCollection
 {

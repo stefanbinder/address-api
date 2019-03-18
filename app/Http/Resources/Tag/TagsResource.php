@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Tag;
 
+use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceObject;
 use App\Models\Tag;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class TagsResource extends ResourceCollection
 {

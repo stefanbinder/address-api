@@ -8,6 +8,7 @@ use App\Jobs\ProcessingSteps\Ordering;
 use App\Jobs\ProcessingSteps\Paginate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -30,15 +31,22 @@ abstract class IndexJob implements ShouldQueue
      */
     protected $processing_steps = [];
     protected $request_data;
+    /**
+     * @var null
+     */
+    private $query;
 
     /**
-     * Create a new job instance
+     * Created a new IndexJob for retrieving a list of resources
+     *
      * @param $request_data
+     * @param Builder $query (can be from a relation eg. $model->relationship()->getQuery() for having a prepared query
      */
-    public function __construct($request_data)
+    public function __construct($request_data, Builder $query = null)
     {
         $this->model        = $this->getEloquent();
         $this->request_data = $request_data;
+        $this->query        = $query;
     }
 
     /**
@@ -54,6 +62,10 @@ abstract class IndexJob implements ShouldQueue
      */
     abstract protected function getEloquent();
 
+    public function setQuery( Builder $query ) {
+        $this->query = $query;
+    }
+
     /**
      * Returns the paginated list after filtering and ordering
      *
@@ -61,7 +73,7 @@ abstract class IndexJob implements ShouldQueue
     public function process()
     {
         // Query-Builder Part
-        $query = $this->model::query();
+        $query = $this->query ?? $this->model::query();
 
         $query = EagerLoading::loading($query, $this->model::ID);
         $query = Ordering::order($query, data_get($this->request_data, 'sort', self::DEFAULT_SORT_STRING));
