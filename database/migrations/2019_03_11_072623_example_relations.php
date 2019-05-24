@@ -22,21 +22,6 @@ class ExampleRelations extends Migration
             $table->softDeletesTz();
         });
 
-        Schema::create('media', function(Blueprint $table) {
-
-            $table->increments('id');
-            $table->timestampsTz();
-            $table->softDeletesTz();
-
-            $table->string('url');
-            $table->string('filename');
-            $table->string('title');
-            $table->string('type');
-
-            $table->integer('mediaable_id');
-            $table->string('mediaable_type');
-        });
-
         Schema::create('vendors', function (Blueprint $table) {
             $table->increments('id');
             $table->timestampsTz();

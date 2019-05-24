@@ -47,55 +47,55 @@ if (!function_exists('build_basic_api_routes')) {
     function build_basic_api_routes($camel_case_lower)
     {
         $str_variations = convert_str_to_variations($camel_case_lower);
-        $silo           = $str_variations['singular_lower'];
         $sica           = $str_variations['singular_capitalize'];
+        $snsi           = $str_variations['snake_case'];
         $snpl           = $str_variations['snake_case_plural'];
 
         Illuminate\Support\Facades\Route::apiResource($snpl, "Api\\$sica\\${sica}Controller");
 
         Illuminate\Support\Facades\Route::get(
-            "$snpl/{{$silo}}/relationships/{relationship}",
+            "$snpl/{{$snsi}}/relationships/{relationship}",
             "Api\\$sica\\${sica}RelationshipController@index"
         )->name("$snpl.relationship.index");
 
         Illuminate\Support\Facades\Route::post(
-            "$snpl/{{$silo}}/relationships/{relationship}",
+            "$snpl/{{$snsi}}/relationships/{relationship}",
             "Api\\$sica\\${sica}RelationshipController@store"
         )->name("$snpl.relationship.store");
 
         Illuminate\Support\Facades\Route::put(
-            "$snpl/{{$silo}}/relationships/{relationship}",
+            "$snpl/{{$snsi}}/relationships/{relationship}",
             "Api\\$sica\\${sica}RelationshipController@update"
         )->name("$snpl.relationship.update");
 
         Illuminate\Support\Facades\Route::delete(
-            "$snpl/{{$silo}}/relationships/{relationship}",
+            "$snpl/{{$snsi}}/relationships/{relationship}",
             "Api\\$sica\\${sica}RelationshipController@destroy"
         )->name("$snpl.relationship.destroy");
 
 
         Illuminate\Support\Facades\Route::get(
-            "$snpl/{{$silo}}/{related}",
+            "$snpl/{{$snsi}}/{related}",
             "Api\\$sica\\${sica}RelatedController@index"
         )->name("$snpl.related.index");
 
         Illuminate\Support\Facades\Route::post(
-            "$snpl/{{$silo}}/{related}",
+            "$snpl/{{$snsi}}/{related}",
             "Api\\$sica\\${sica}RelatedController@store"
         )->name("$snpl.related.store");
 
         Illuminate\Support\Facades\Route::get(
-            "$snpl/{{$silo}}/{related}/{id}",
+            "$snpl/{{$snsi}}/{related}/{id}",
             "Api\\$sica\\${sica}RelatedController@show"
         )->name("$snpl.related.show");
 
         Illuminate\Support\Facades\Route::put(
-            "$snpl/{{$silo}}/{related}/{id}",
+            "$snpl/{{$snsi}}/{related}/{id}",
             "Api\\$sica\\${sica}RelatedController@update"
         )->name("$snpl.related.update");
 
         Illuminate\Support\Facades\Route::delete(
-            "$snpl/{{$silo}}/{related}/{id}",
+            "$snpl/{{$snsi}}/{related}/{id}",
             "Api\\$sica\\${sica}RelatedController@destroy"
         )->name("$snpl.related.destroy");
     }
@@ -111,6 +111,6 @@ if (!function_exists('is_identifier_object')) {
      */
     function is_identifier_object($data)
     {
-        return array_key_exists('id', $data) && array_key_exists('type', $data);
+        return array_key_exists('type', $data) || (array_key_exists('data', $data) && array_key_exists('type', $data['data']));
     }
 }

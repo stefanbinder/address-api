@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Country;
 
 use App\Http\Controllers\ApiController;
-use App\Jobs\Api\RelationshipDestroyJob;
-use App\Jobs\Api\RelationshipIndexJob;
-use App\Jobs\Api\RelationshipStoreJob;
-use App\Jobs\Api\RelationshipUpdateJob;
+use App\Jobs\Relationship\RelationshipDestroyJob;
+use App\Jobs\Relationship\RelationshipIndexJob;
+use App\Jobs\Relationship\RelationshipStoreJob;
+use App\Jobs\Relationship\RelationshipUpdateJob;
 use App\Models\Address\Country;
 use Illuminate\Http\Request;
 

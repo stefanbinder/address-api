@@ -2,6 +2,7 @@
 
 namespace App\Jobs\ProcessingSteps;
 
+use App\Exceptions\Api\Jobs\NotFoundRelatedException;
 use App\Exceptions\Api\Jobs\ValidationException;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\NotImplementedException;
@@ -42,43 +43,59 @@ class ProcessRelations
     {
         foreach ($relationships as $relationshipId => $resourceData) {
             $relationship = $model->$relationshipId();
-            switch (get_class($relationship)) {
-                case HasOne::class:
-                    self::processRelationshipHasOne($model, $relationship, $resourceData);
-                    break;
-                case HasMany::class:
-                    self::processRelationshipHasMany($model, $relationship, $resourceData);
-                    break;
-                case BelongsTo::class:
-                    self::processRelationshipBelongsTo($model, $relationship, $resourceData);
-                    break;
-                case BelongsToMany::class:
-                    self::processRelationshipBelongsToMany($model, $relationship, $resourceData);
-                    break;
-                case HasManyThrough::class:
-                    self::processRelationshipHasManyThrough($model, $relationship, $resourceData);
-                    break;
-                case MorphMany::class:
-                    self::processRelationshipMorphMany($model, $relationship, $resourceData);
-                    break;
-                case MorphOne::class:
-                    self::processRelationshipMorphOne($model, $relationship, $resourceData);
-                    break;
-                case MorphPivot::class:
-                    self::processRelationshipMorphPivot($model, $relationship, $resourceData);
-                    break;
-                case MorphTo::class:
-                    self::processRelationshipMorphTo($model, $relationship, $resourceData);
-                    break;
-                case MorphToMany::class:
-                    self::processRelationshipMorphToMany($model, $relationship, $resourceData);
-                    break;
-                case Pivot::class:
-                    self::processRelationshipPivot($model, $relationship, $resourceData);
-                    break;
-                default:
-                    throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not handled by backend');
-            }
+            self::processRelationship($relationship, $resourceData);
+        }
+    }
+
+    /**
+     * Processes the sent relationship data
+     *
+     * Overwrite the method for detailed processing of attributes.
+     *
+     * @param $relationship
+     * @param $resourceData
+     * @return Collection|ApiModel|static|null
+     * @throws NotImplementedException
+     * @throws ValidationException
+     */
+    public static function processRelationship($relationship, $resourceData)
+    {
+        switch (get_class($relationship)) {
+            case HasOne::class:
+                return self::processRelationshipHasOne($relationship, $resourceData);
+                break;
+            case HasMany::class:
+                return self::processRelationshipHasMany($relationship, $resourceData);
+                break;
+            case BelongsTo::class:
+                return self::processRelationshipBelongsTo($relationship, $resourceData);
+                break;
+            case BelongsToMany::class:
+                return self::processRelationshipBelongsToMany($relationship, $resourceData);
+                break;
+            case HasManyThrough::class:
+                return self::processRelationshipHasManyThrough($relationship, $resourceData);
+                break;
+            case MorphMany::class:
+                return self::processRelationshipMorphMany($relationship, $resourceData);
+                break;
+            case MorphOne::class:
+                return self::processRelationshipMorphOne($relationship, $resourceData);
+                break;
+            case MorphPivot::class:
+                return self::processRelationshipMorphPivot($relationship, $resourceData);
+                break;
+            case MorphTo::class:
+                return self::processRelationshipMorphTo($relationship, $resourceData);
+                break;
+            case MorphToMany::class:
+                return self::processRelationshipMorphToMany($relationship, $resourceData);
+                break;
+            case Pivot::class:
+                return self::processRelationshipPivot($relationship, $resourceData);
+                break;
+            default:
+                throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not handled by backend');
         }
     }
 
@@ -89,22 +106,21 @@ class ProcessRelations
      * $user->hasOne('App\Phone', 'foreign_key', 'local_key');
      *
      *
-     * @param ApiModel $model
-     * @param HasOne $relationship
+     * @param HasOne $hasOne
      * @param $resourceData
-     * @return bool
+     * @return ApiModel|static|null
      * @throws ValidationException
      * @throws NotImplementedException
      */
-    public static function processRelationshipHasOne(ApiModel $model, HasOne $relationship, $resourceData)
+    public static function processRelationshipHasOne(HasOne $hasOne, $resourceData)
     {
-        $relationModel = self::getAndStoreOrUpdateRelationModel($relationship, $resourceData);
+        $relationModel = self::getAndStoreOrUpdateRelationModel($hasOne, $resourceData);
 
         if ($relationModel instanceof ApiModel) {
-            $relationship->save($relationModel);
+            $hasOne->save($relationModel);
         }
 
-        return true;
+        return $relationModel;
     }
 
     /**
@@ -119,20 +135,37 @@ class ProcessRelations
      * $post->comments()->create([ 'message' => 'my comment'])
      * $post->comments()->createMany([ 'message' => 'my comment 1'], [ 'message' => 'my comment 2'])
      *
-     * @param ApiModel $model
-     * @param HasMany $relationship
+     * @param HasMany $hasMany
      * @param $resourceData
+     * @return Collection|ApiModel|static|null
      * @throws ValidationException
      * @throws NotImplementedException
+     * @throws ResourceObjectTypeError
      */
-    public static function processRelationshipHasMany(ApiModel $model, HasMany $relationship, $resourceData)
+    public static function processRelationshipHasMany(HasMany $hasMany, $resourceData)
     {
-        foreach ($resourceData as $resource) {
-            $relationModel = self::getAndStoreOrUpdateRelationModel($relationship, $resource);
 
-            if ($relationModel) {
-                $relationship->save($relationModel);
+        if( is_identifier_object($resourceData) ) {
+
+            $relationModel = self::getAndStoreOrUpdateRelationModel($hasMany, $resourceData);
+            $hasMany->save($relationModel);
+
+            return $relationModel;
+
+        } else if ( is_array($resourceData) ) {
+
+            $list = collect();
+
+            foreach ($resourceData as $resource) {
+                $relationModel = self::getAndStoreOrUpdateRelationModel($hasMany, $resource);
+
+                if ($relationModel) {
+                    $hasMany->save($relationModel);
+                    $list->push($relationModel);
+                }
             }
+
+            return $list;
         }
 
     }
@@ -146,22 +179,22 @@ class ProcessRelations
      * $user->phone()->associate($phone)    // sets user_id on phone
      * $user->phone()->dissociate($phone)   // sets user_id to null on phone
      *
-     * @param ApiModel $model
-     * @param BelongsTo $relationship
+     * @param BelongsTo $belongsTo
      * @param $resourceData
-     * @return bool
+     * @return ApiModel|static|null
      * @throws NotImplementedException
+     * @throws ResourceObjectTypeError
      * @throws ValidationException
      */
-    public static function processRelationshipBelongsTo(ApiModel $model, BelongsTo $relationship, $resourceData)
+    public static function processRelationshipBelongsTo(BelongsTo $belongsTo, $resourceData)
     {
-        $relationModel = self::getAndStoreOrUpdateRelationModel($relationship, $resourceData);
+        $relationModel = self::getAndStoreOrUpdateRelationModel($belongsTo, $resourceData);
 
         if ($relationModel) {
-            $relationship->associate($relationModel);
+            $belongsTo->associate($relationModel);
         }
 
-        return true;
+        return $relationModel;
     }
 
     /**
@@ -180,46 +213,115 @@ class ProcessRelations
      * $user->roles()->syncWithoutDetaching([4, 5, 6])
      *
      * $user->roles()->save($role, ['pivot' => 'data'])
-     * @param $model
-     * @param Relation $relationship
+     * @param BelongsToMany $belongsToMany
      * @param $resourceData
+     * @return Collection|ApiModel|static|null
+     * @throws NotImplementedException
+     * @throws ResourceObjectTypeError
+     * @throws ValidationException
      */
-    public static function processRelationshipBelongsToMany(Model $model, Relation $relationship, $resourceData)
+    public static function processRelationshipBelongsToMany(BelongsToMany $belongsToMany, $resourceData)
     {
 
+        // Either get a list of entries => sync whole list
+        // Or get a single ID Object => add it to list
+
+        if( is_identifier_object($resourceData) ) {
+
+            $relationModel = self::getAndStoreOrUpdateRelationModel($belongsToMany, $resourceData);
+
+            if( $relationModel ) {
+                $belongsToMany->syncWithoutDetaching([$relationModel->id]);
+            }
+
+            return $relationModel;
+
+        } else if( is_array($resourceData) ) {
+
+            $list = collect();
+
+            foreach($resourceData as $resource) {
+
+                $relationModel = self::getAndStoreOrUpdateRelationModel($belongsToMany, $resource);
+                $list->push($relationModel);
+            }
+
+            $belongsToMany->sync($list->pluck('id'));
+            return $list;
+
+        }
+
+        return null;
     }
 
-    public static function processRelationshipHasManyThrough(Model $model, $relationship, $resourceData)
+    public static function processRelationshipHasManyThrough($relationship, $resourceData)
     {
         throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
-    public static function processRelationshipMorphMany(Model $model, $relationship, $resourceData)
+    public static function processRelationshipMorphMany($relationship, $resourceData)
     {
         throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
-    public static function processRelationshipMorphOne(Model $model, $relationship, $resourceData)
+    public static function processRelationshipMorphOne($relationship, $resourceData)
     {
         throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
-    public static function processRelationshipMorphPivot(Model $model, $relationship, $resourceData)
+    public static function processRelationshipMorphPivot($relationship, $resourceData)
     {
         throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
-    public static function processRelationshipMorphTo(Model $model, $relationship, $resourceData)
+    public static function processRelationshipMorphTo($relationship, $resourceData)
     {
+        dd($resourceData, $relationship);
         throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
 
-    public static function processRelationshipMorphToMany(Model $model, $relationship, $resourceData)
+    /**
+     * @param MorphToMany $morphToMany
+     * @param $resourceData
+     * @return ProcessRelations|ApiModel|null
+     * @throws NotImplementedException
+     * @throws ResourceObjectTypeError
+     * @throws ValidationException
+     */
+    public static function processRelationshipMorphToMany(MorphToMany $morphToMany, $resourceData)
     {
-        throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
+        // Either get a list of entries => sync whole list
+        // Or get a single ID Object => add it to list
+
+        if( is_identifier_object($resourceData) ) {
+
+            $relationModel = self::getAndStoreOrUpdateRelationModel($morphToMany, $resourceData);
+
+            if( $relationModel ) {
+                $morphToMany->syncWithoutDetaching([$relationModel->id]);
+            }
+
+            return $relationModel;
+
+        } else if( is_array($resourceData) ) {
+
+            $list = collect();
+
+            foreach($resourceData as $resource) {
+
+                $relationModel = self::getAndStoreOrUpdateRelationModel($morphToMany, $resource);
+                $list->push($relationModel);
+            }
+
+            $morphToMany->sync($list->pluck('id'));
+
+        }
+
+        return null;
+
     }
 
-    public static function processRelationshipPivot(Model $model, $relationship, $resourceData)
+    public static function processRelationshipPivot($relationship, $resourceData)
     {
         throw new NotImplementedException('The relationship ' . get_class($relationship) . ' is not implemented yet by backend!');
     }
@@ -227,9 +329,8 @@ class ProcessRelations
 
     /**
      * @param Relation $relationship
-     * @param $type
      * @param $id
-     * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|null
+     * @return ApiModel|static|null
      */
     public static function getModelOfRelationshipWithId(Relation $relationship, $id)
     {
@@ -240,6 +341,8 @@ class ProcessRelations
             $relationModel = $relationModelClass::find($id);
         }
 
+        // TODO: result of find also can be an array, pls consider here somehow
+
         return $relationModel;
     }
 
@@ -247,22 +350,35 @@ class ProcessRelations
      * Gets the model of the relationship and tries to store or update the model with the given $resourceData
      * The ID is retrieved by $resourceData
      *
-     * @param Relation $relationship
+     * @param Relation $relation
      * @param $resourceData
-     * @return \Illuminate\Database\Eloquent\Collection|Model|Model[]|Relation|Relation[]|null
+     * @return ApiModel|static|null
      * @throws NotImplementedException
      * @throws ValidationException
+     * @throws ResourceObjectTypeError
      */
-    public static function getAndStoreOrUpdateRelationModel(Relation $relationship, $resourceData)
+    public static function getAndStoreOrUpdateRelationModel(Relation $relation, $resourceData)
     {
         // TODO: refactor and make method smaller. Break down into:
         // storeRelationModel
         // updateRelationModel
 
+        if( ! is_identifier_object($resourceData) ) {
+            throw new ResourceObjectTypeError('is empty, ', null);
+        }
+
         $id   = $resourceData['data']['id'] ?? null;
         $type = $resourceData['data']['type'];
 
-        $relationModel = self::getModelOfRelationshipWithId($relationship, $id);
+        $eloquent = $relation->getModel();
+
+        // If the given type in the request isn't the same as our eloquent-model, which he wants to store
+        // we give back an error, that we can't assign and validate the request
+        if($eloquent::ID !== $resourceData['data']['type']) {
+            throw new ResourceObjectTypeError($resourceData['data']['type'], $eloquent::ID);
+        }
+
+        $relationModel = self::getModelOfRelationshipWithId($relation, $id);
 
         if (array_key_exists('attributes', $resourceData['data'])) {
 
@@ -277,6 +393,7 @@ class ProcessRelations
 
                 $validatedData = $validator->validate();
                 $relationModel->update($validatedData['data']['attributes']);
+
             } else {
 
                 $rule      = ApiRequestFactory::rules($type);
@@ -286,10 +403,8 @@ class ProcessRelations
                     throw new ValidationException($validator);
                 }
 
-                $relationModelClass = $relationship->getModel();
-
                 $validatedData = $validator->validate();
-                $relationModel = $relationModelClass::create($validatedData['data']['attributes']);
+                $relationModel = $eloquent::create($validatedData['data']['attributes']);
             }
         }
 

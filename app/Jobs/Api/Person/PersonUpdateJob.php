@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Person;
 
-use App\Jobs\Api\UpdateJob;
+use App\Jobs\Basic\UpdateJob;
 
 class PersonUpdateJob extends UpdateJob
 {

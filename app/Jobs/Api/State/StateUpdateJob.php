@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\State;
 
-use App\Jobs\Api\UpdateJob;
+use App\Jobs\Basic\UpdateJob;
 
 class StateUpdateJob extends UpdateJob
 {

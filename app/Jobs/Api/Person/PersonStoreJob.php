@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Person;
 
-use App\Jobs\Api\StoreJob;
+use App\Jobs\Basic\StoreJob;
 use App\Models\User\Person;
 
 class PersonStoreJob extends StoreJob

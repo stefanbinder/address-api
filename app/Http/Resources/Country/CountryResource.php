@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Country;
 
 use App\Http\Resources\ResourceObject;
-use App\Jobs\Api\Country\CountryRelatedIndexJob;
+use App\Jobs\Related\RelatedIndexJob;
 use App\Models\Address\Country;
 
 class CountryResource extends ResourceObject
@@ -36,13 +36,15 @@ class CountryResource extends ResourceObject
     {
         return [
             'states',
-            'president'
+            'president',
+            'tags',
+            'vendors'
         ];
     }
 
     protected function get_relationship($relationship, $request_data)
     {
-        return CountryRelatedIndexJob::dispatchNow($request_data, $this->resource, $relationship);
+        return RelatedIndexJob::dispatchNow($request_data, $this->resource, $relationship);
     }
 
     public function name()

@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Tag;
 
-use App\Jobs\Api\UpdateJob;
+use App\Jobs\Basic\UpdateJob;
 
 class TagUpdateJob extends UpdateJob
 {

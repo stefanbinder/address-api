@@ -2,26 +2,34 @@
 
 namespace App\Jobs\Api\State;
 
-use App\Jobs\Api\IndexJob;
-use App\Jobs\ProcessingSteps\Paginate;
+use App\Jobs\Basic\DefaultIndexJob;
 use App\Models\Address\State;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
-class StateIndexJob extends IndexJob
+class StateIndexJob extends DefaultIndexJob
 {
 
-    /**
-     * Execute the job.
-     *
-     * @return Paginate
-     */
-    public function handle()
+    protected function init()
     {
-        return $this->process();
+        parent::init();
+        $this->setApiModel( new State() );
     }
 
-    protected function getEloquent()
-    {
-        return State::class;
-    }
+//    protected function processBuilder(Builder $builder)
+//    {
+//        return $builder;
+//    }
+//
+//    protected function processList(Collection $collection)
+//    {
+//        return $collection;
+//    }
+//
+//    protected function processPagination(Paginator $paginator)
+//    {
+//        return $paginator;
+//    }
 
 }

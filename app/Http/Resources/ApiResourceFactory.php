@@ -5,8 +5,8 @@ namespace App\Http\Resources;
 use App\Exceptions\Api\NotImplementedException;
 use App\Http\Resources\Country\CountriesResource;
 use App\Http\Resources\Country\CountryResource;
-use App\Http\Resources\Media\MediaResource;
-use App\Http\Resources\Media\MediasResource;
+use App\Http\Resources\MediaObject\MediaObjectResource;
+use App\Http\Resources\MediaObject\MediaObjectsResource;
 use App\Http\Resources\Person\PeopleResource;
 use App\Http\Resources\Person\PersonResource;
 use App\Http\Resources\State\StateResource;
@@ -49,9 +49,9 @@ class ApiResourceFactory
             case 'tag':
             case 'tags':
                 return new TagResource($model);
-            case 'media':
-            case 'medias':
-                return new MediaResource($model);
+            case 'media_object':
+            case 'media_objects':
+                return new MediaObjectResource($model);
             default:
                 throw new NotImplementedException("ResourceObject for '$resourceIdentifier' is not defined in ApiResourceFactory");
         }
@@ -81,9 +81,9 @@ class ApiResourceFactory
             case 'tag':
             case 'tags':
                 return new TagsResource($collection);
-            case 'media':
-            case 'medias':
-                return new MediasResource($collection);
+            case 'media_object':
+            case 'media_objects':
+                return new MediaObjectsResource($collection);
 
             default:
                 throw new NotImplementedException("ResourceCollection for '$resourceIdentifier' is not defined in ApiResourceFactory");

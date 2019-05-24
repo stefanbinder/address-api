@@ -3,7 +3,7 @@
 namespace App\Models\Address;
 
 use App\Models\ApiModel;
-use App\Models\Media\Media;
+use App\Models\MediaObject\MediaObject;
 use App\Models\Tag;
 use App\Models\User\Person;
 
@@ -34,6 +34,7 @@ class Country extends ApiModel
         'id',
         'name',
         'code',
+        'inhabitants'
     ];
 
     const SEARCHABLE = [
@@ -54,9 +55,14 @@ class Country extends ApiModel
         return $this->belongsToMany(Vendor::class);
     }
 
-    public function media()
+    public function flag()
     {
-        return $this->morphMany(Media::class, 'mediaable');
+        return $this->morphOne(MediaObject::class, 'media_objectable')->wherePivot('flag');
+    }
+
+    public function images()
+    {
+        return $this->morphMany(MediaObject::class, 'media_objectable')->wherePivot('images');
     }
 
     public function tags()

@@ -25,5 +25,5 @@ build_basic_api_routes('country');
 build_basic_api_routes('state');
 build_basic_api_routes('person');
 build_basic_api_routes('tag');
-build_basic_api_routes('media');
+build_basic_api_routes('mediaObject');
 build_basic_api_routes('vendor');

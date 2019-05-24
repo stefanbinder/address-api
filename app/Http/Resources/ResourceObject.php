@@ -3,11 +3,10 @@
 namespace App\Http\Resources;
 
 use App\Exceptions\Api\Jobs\NotFoundRelatedException;
-use App\Jobs\Api\ApiJobFactory;
-use App\Jobs\Api\RelationshipIndexJob;
+use App\Jobs\Related\RelatedIndexJob;
+use App\Jobs\Relationship\RelationshipIndexJob;
 use App\Models\ApiModel;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
 
 abstract class ResourceObject extends JsonResource
 {
@@ -37,13 +36,6 @@ abstract class ResourceObject extends JsonResource
      * @var ApiModel
      */
     protected $model;
-
-    /**
-     * Will be automatically filled
-     * @var string
-     */
-    protected $model_name;
-    protected $model_name_plural;
 
     protected $default_fields;
     protected $all_fields;
@@ -131,13 +123,11 @@ abstract class ResourceObject extends JsonResource
         $this->default_fields = $this->get_default_fields();
         $this->all_fields     = $this->get_all_fields();
 
-        $model_name              = explode("\\", $this->model);
-        $this->model_name        = strtolower($model_name[count($model_name) - 1]);
-        $this->model_name_plural = Str::plural($this->model_name);
+        $eloquent = $this->model;
 
         $resource_object = [
             'id'   => (string)$this->id,
-            'type' => $this->model_name_plural,
+            'type' => $eloquent::ID,
         ];
 
         if (in_array(self::EMBED_ATTRIBUTES, $this->embed)) {
@@ -184,12 +174,11 @@ abstract class ResourceObject extends JsonResource
 
         foreach ($included as $include) {
 
-            if( !method_exists($this->model, $include )) {
+            if (!method_exists($this->model, $include)) {
                 throw new NotFoundRelatedException($include, null, $this->model, null);
             }
 
-            $relatedIndexJob = ApiJobFactory::relatedIndex($this->model::ID);
-            $to_include      = $relatedIndexJob::dispatchNow([], $this->resource, $include);
+            $to_include = RelatedIndexJob::dispatchNow([], $this->resource, $include);
 
             if ($to_include instanceof ResourceCollection) {
                 $include_data = $include_data->merge($to_include);
@@ -197,7 +186,7 @@ abstract class ResourceObject extends JsonResource
 
                 // We retrieve related data, if related data does not exists, an data-null array is returned.
                 // Do not include empty arrays with data-null objects
-                if( ! (array_key_exists('data', $to_include) && $to_include['data'] === null ) ) {
+                if (!(array_key_exists('data', $to_include) && $to_include['data'] === null)) {
                     $include_data = $include_data->push($to_include);
                 }
 
@@ -248,7 +237,7 @@ abstract class ResourceObject extends JsonResource
     protected function build_links()
     {
         return [
-            'self' => route($this->model_name_plural . '.show', [$this->model_name => $this->id])
+            'self' => route($this->model::ID . '.show', [$this->model::ID => $this->id])
         ];
     }
 

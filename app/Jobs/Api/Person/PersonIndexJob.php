@@ -2,25 +2,34 @@
 
 namespace App\Jobs\Api\Person;
 
-use App\Jobs\Api\IndexJob;
-use App\Jobs\ProcessingSteps\Paginate;
+use App\Jobs\Basic\DefaultIndexJob;
 use App\Models\User\Person;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
-class PersonIndexJob extends IndexJob
+class PersonIndexJob extends DefaultIndexJob
 {
 
-    /**
-     * Execute the job.
-     *
-     * @return Paginate
-     */
-    public function handle()
+    protected function init()
     {
-        return $this->process();
+        parent::init();
+        $this->setApiModel( new Person() );
     }
 
-    protected function getEloquent()
-    {
-        return Person::class;
-    }
+//    protected function processBuilder(Builder $builder)
+//    {
+//        return $builder;
+//    }
+//
+//    protected function processList(Collection $collection)
+//    {
+//        return $collection;
+//    }
+//
+//    protected function processPagination(Paginator $paginator)
+//    {
+//        return $paginator;
+//    }
+
 }

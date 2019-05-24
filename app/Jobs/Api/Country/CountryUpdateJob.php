@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Country;
 
-use App\Jobs\Api\UpdateJob;
+use App\Jobs\Basic\UpdateJob;
 
 class CountryUpdateJob extends UpdateJob
 {

@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Country;
 
-use App\Jobs\Api\DestroyJob;
+use App\Jobs\Basic\DestroyJob;
 
 class CountryDestroyJob extends DestroyJob
 {

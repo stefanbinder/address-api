@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Tag;
 
-use App\Jobs\Api\StoreJob;
+use App\Jobs\Basic\StoreJob;
 use App\Models\Tag;
 
 class TagStoreJob extends StoreJob

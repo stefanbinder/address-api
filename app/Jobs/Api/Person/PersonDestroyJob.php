@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Person;
 
-use App\Jobs\Api\DestroyJob;
+use App\Jobs\Basic\DestroyJob;
 
 class PersonDestroyJob extends DestroyJob
 {

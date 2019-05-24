@@ -3,7 +3,7 @@
 namespace App\Models\Address;
 
 use App\Models\ApiModel;
-use App\Models\Media\Media;
+use App\Models\MediaObject\MediaObject;
 use App\Models\Tag;
 
 class State extends ApiModel
@@ -35,9 +35,9 @@ class State extends ApiModel
         return $this->belongsTo(Country::class, 'country_id', 'id');
     }
 
-    public function media()
+    public function media_object()
     {
-        return $this->morphOne(Media::class, 'mediaable');
+        return $this->morphOne(MediaObject::class, 'media_objectable');
     }
 
     public function tags()

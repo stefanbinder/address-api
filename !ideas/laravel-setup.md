@@ -50,4 +50,9 @@ $app->singleton(
 );
 ```
 
+## File Handling
 
+First call command to create a symlink between uploaded files in storage and public folder.
+```
+php artisan storage:link
+```

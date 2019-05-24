@@ -9,12 +9,12 @@ use App\Http\Requests\Api\Country\CountryRules;
 use App\Http\Requests\Api\Country\CountryShowRequest;
 use App\Http\Requests\Api\Country\CountryStoreRequest;
 use App\Http\Requests\Api\Country\CountryUpdateRequest;
-use App\Http\Requests\Api\Media\MediaDestroyRequest;
-use App\Http\Requests\Api\Media\MediaIndexRequest;
-use App\Http\Requests\Api\Media\MediaRules;
-use App\Http\Requests\Api\Media\MediaShowRequest;
-use App\Http\Requests\Api\Media\MediaStoreRequest;
-use App\Http\Requests\Api\Media\MediaUpdateRequest;
+use App\Http\Requests\Api\MediaObject\MediaObjectDestroyRequest;
+use App\Http\Requests\Api\MediaObject\MediaObjectIndexRequest;
+use App\Http\Requests\Api\MediaObject\MediaObjectRules;
+use App\Http\Requests\Api\MediaObject\MediaObjectShowRequest;
+use App\Http\Requests\Api\MediaObject\MediaObjectStoreRequest;
+use App\Http\Requests\Api\MediaObject\MediaObjectUpdateRequest;
 use App\Http\Requests\Api\Person\PersonDestroyRequest;
 use App\Http\Requests\Api\Person\PersonIndexRequest;
 use App\Http\Requests\Api\Person\PersonRules;
@@ -68,8 +68,8 @@ class ApiRequestFactory
                 return VendorIndexRequest::class;
             case 'tags':
                 return TagIndexRequest::class;
-            case 'media':
-                return MediaIndexRequest::class;
+            case 'media_objects':
+                return MediaObjectIndexRequest::class;
             default:
                 throw new NotImplementedException("IndexRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -95,8 +95,8 @@ class ApiRequestFactory
                 return VendorShowRequest::class;
             case 'tags':
                 return TagShowRequest::class;
-            case 'media':
-                return MediaShowRequest::class;
+            case 'media_objects':
+                return MediaObjectShowRequest::class;
             default:
                 throw new NotImplementedException("ShowRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -122,8 +122,8 @@ class ApiRequestFactory
                 return VendorStoreRequest::class;
             case 'tags':
                 return TagStoreRequest::class;
-            case 'media':
-                return MediaStoreRequest::class;
+            case 'media_objects':
+                return MediaObjectStoreRequest::class;
             default:
                 throw new NotImplementedException("StoreRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -149,8 +149,8 @@ class ApiRequestFactory
                 return VendorUpdateRequest::class;
             case 'tags':
                 return TagUpdateRequest::class;
-            case 'media':
-                return MediaUpdateRequest::class;
+            case 'media_objects':
+                return MediaObjectUpdateRequest::class;
             default:
                 throw new NotImplementedException("UpdateRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -176,8 +176,8 @@ class ApiRequestFactory
                 return VendorDestroyRequest::class;
             case 'tags':
                 return TagDestroyRequest::class;
-            case 'media':
-                return MediaDestroyRequest::class;
+            case 'media_objects':
+                return MediaObjectDestroyRequest::class;
             default:
                 throw new NotImplementedException("DestroyRequest for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }
@@ -203,8 +203,8 @@ class ApiRequestFactory
                 return VendorRules::class;
             case 'tags':
                 return TagRules::class;
-            case 'media':
-                return MediaRules::class;
+            case 'media_objects':
+                return MediaObjectRules::class;
             default:
                 throw new NotImplementedException("Rules for '$resourceIdentifier' is not defined in ApiRequestFactory");
         }

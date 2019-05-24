@@ -2,22 +2,24 @@
 
 namespace App\Jobs\Api\State;
 
-use App\Jobs\Api\StoreJob;
+use App\Jobs\Basic\StoreJob;
 use App\Models\Address\State;
 
 class StateStoreJob extends StoreJob
 {
-
-    /**
-     * Execute the job.
-     */
-    public function handle()
+    protected function init()
     {
-        return $this->process();
+        $this->setApiModel( new State() );
     }
 
-    protected function getEloquent()
-    {
-        return State::class;
-    }
+//    protected function processAttributesBeforeCreate(array $attributes)
+//    {
+//        return $attributes;
+//    }
+
+//    protected function processModelAfterCreate( ApiModel $country )
+//    {
+//        return $country;
+//    }
+
 }

@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\State;
 
-use App\Jobs\Api\DestroyJob;
+use App\Jobs\Basic\DestroyJob;
 
 class StateDestroyJob extends DestroyJob
 {

@@ -12,7 +12,7 @@ abstract class ApiModel extends Model
 
     use SoftDeletes;
 
-    const ID = null;
+    public const ID = null;
 
     public function get_identifier_object()
     {

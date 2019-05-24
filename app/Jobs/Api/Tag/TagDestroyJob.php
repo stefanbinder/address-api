@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Api\Tag;
 
-use App\Jobs\Api\DestroyJob;
+use App\Jobs\Basic\DestroyJob;
 
 class TagDestroyJob extends DestroyJob
 {
