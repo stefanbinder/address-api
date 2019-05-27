@@ -17,7 +17,6 @@ class CountryRules
             'data.attributes.code'         => 'required|unique:countries,code',
             'data.attributes.inhabitants'  => '',
             'data.attributes.founded_at'   => '',
-            'data.attributes.some_time'    => '',
             'data.attributes.last_visited' => '',
             'data.relationships'           => '',
         ];
@@ -37,7 +36,6 @@ class CountryRules
             'data.attributes.code'         => 'size:2|unique:countries,id,' . $model->id,
             'data.attributes.inhabitants'  => '',
             'data.attributes.founded_at'   => '',
-            'data.attributes.some_time'    => '',
             'data.attributes.last_visited' => '',
             'data.relationships'           => '',
         ];

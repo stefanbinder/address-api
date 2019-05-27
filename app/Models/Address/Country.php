@@ -25,7 +25,6 @@ class Country extends ApiModel
         'code',
         'inhabitants',
         'founded_at',
-        'some_time',
         'last_visited',
         'president_id'
     ];

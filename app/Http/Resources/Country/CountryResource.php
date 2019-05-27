@@ -72,14 +72,19 @@ class CountryResource extends ResourceObject
         return $this->inhabitants;
     }
 
+    public function president_id()
+    {
+        return $this->president_id;
+    }
+
     public function founded_at()
     {
-        return $this->founded_at;
+        return (string)$this->founded_at;
     }
 
     public function last_visited()
     {
-        return $this->last_visited;
+        return (string)$this->last_visited;
     }
 
     public function created_at()

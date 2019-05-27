@@ -25,7 +25,7 @@ class StateRules
     public static function update($model)
     {
         return [
-            'data.id'                    => 'required|exists:countries,id',
+            'data.id'                    => 'required|exists:states,id',
             'data.type'                  => 'required|in:states',
             'data.attributes.name'       => 'required|string|nullable',
         ];
