@@ -6,65 +6,85 @@ use App\Models\Address\Country;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ApiTestCase;
 
-abstract class DefaultEndpointsHelper extends ApiTestCase
+abstract class RelatedEndpointsHelper extends ApiTestCase
 {
 
     use RefreshDatabase;
 
     abstract public function assertAttributes($attributes, $testAttributes);
     abstract public function getModel();
+    abstract public function getFactory($factoryMethod='create');
     abstract public function getEndpoint();
 
-    public function testIndex()
+    public function testIntegration()
     {
-        $model = factory($this->getModel())->create();
-        $response = $this->getAndAssertStatus($this->getEndpoint());
 
-        foreach($response['data'] as $listItem) {
-            if($listItem['id'] === $model->id) {
-                $this->assertModelWithModelIdentifierObj($model, $listItem);
-            }
-        }
-    }
 
-    public function testShow()
-    {
-        $model = factory($this->getModel())->create();
-        $response = $this->getAndAssertStatus($this->getEndpoint() . $model->id);
-        $this->assertModelWithModelIdentifierObj($model, $response['data']);
-    }
+        /**
+         *  1. STORE / CREATE
+         */
 
-    public function testStore()
-    {
-        $model = factory($this->getModel())->make();
+        $model = $this->getFactory('make');
         $modelData = $this->createIdObject($model::ID, null, $model->getAttributes());
         $response = $this->postAndAssertStatus($this->getEndpoint(), $modelData, [], 201);
         $this->assertModelIdentifierWithModelIdentifier($modelData['data'], $response['data']);
-    }
 
-    public function testUpdate()
-    {
-        $model = factory($this->getModel())->create();
+        $relatedModelId = $response['data'];
+
+        /**
+         * 2. INDEX
+         * depending on type, single item or list,
+         * eg. countries/1/states => list
+         *     countries/1/president => item
+         */
+
+        $response = $this->getAndAssertStatus($this->getEndpoint());
+
+        if( is_identifier_object($response) ) {
+            $this->assertModelIdentifierWithModelIdentifier($relatedModelId, $response['data']);
+        } else {
+
+            foreach($response['data'] as $listItem) {
+                if($listItem['id'] === $relatedModelId['id']) {
+                    $this->assertModelIdentifierWithModelIdentifier($relatedModelId, $listItem);
+                }
+            }
+
+        }
+
+        /**
+         * 3. SHOW
+         */
+
+        $response = $this->getAndAssertStatus($this->getEndpoint() . $relatedModelId['id']);
+        $this->assertModelIdentifierWithModelIdentifier($relatedModelId, $response['data']);
+
+        /**
+         * 4. UPDATE
+         */
+
         $modelFaker = factory($this->getModel())->make();
 
-        $modelData = $this->createIdObject($model::ID, $model->id, $modelFaker->getAttributes());
+        $modelData = $this->createIdObject($model::ID, $relatedModelId['id'], $modelFaker->getAttributes());
         $response = $this->putAndAssertStatus($this->getEndpoint(), $modelData, [], 200);
         $this->assertModelIdentifierWithModelIdentifier($modelData['data'], $response['data']);
-    }
 
-    public function testDelete()
-    {
-        $model = factory($this->getModel())->create();
+        $relatedModelId = $response['data'];
 
-        $modelData = $this->createIdObject($model::ID, $model->id);
+        /**
+         * 5. DELETE
+         */
+
+        $modelData = $this->createIdObject($model::ID, $relatedModelId['id']);
         $response = $this->deleteAndAssertStatus($this->getEndpoint(), $modelData, [], 200);
 
         $this->assertEquals('deleted', $response['meta']['message']);
-        $this->assertEquals($model->id, $response['meta']['id']);
+        $this->assertEquals($relatedModelId['id'], $response['meta']['id']);
 
         $response = $this->deleteAndAssertStatus($this->getEndpoint(), $modelData, [], 200);
 
         $this->assertStringStartsWith('It was already deleted on', $response['meta']['message']);
+
     }
 
     public function assertModelWithModelIdentifierObj($model, $testCountryId)

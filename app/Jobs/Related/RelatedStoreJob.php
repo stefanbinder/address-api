@@ -56,6 +56,8 @@ class RelatedStoreJob implements ShouldQueue
         }
 
         $relatedModel = ProcessRelations::processRelationship($this->model->$related(), $this->request_data);
+        $this->model->push();
+
         return $relatedModel;
     }
 

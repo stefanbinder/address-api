@@ -15,44 +15,44 @@ class ApiTestCase extends TestCase
         $this->faker = new Faker();
     }
 
-    public function createIdObject($type, $id=null, $attributes=null, $relationships=null)
+    public function createIdObject($type, $id = null, $attributes = null, $relationships = null)
     {
         $object = [
             'data' => [
-                'type' => $type,
-                'attributes' => [],
+                'type'          => $type,
+                'attributes'    => [],
                 'relationships' => [],
             ]
         ];
 
-        if( $id ) {
+        if ($id) {
             $object['data']['id'] = $id;
         }
 
-        if( $attributes ) {
+        if ($attributes) {
             $object['data']['attributes'] = $attributes;
         }
 
-        if( $relationships ) {
+        if ($relationships) {
             $object['data']['relationships'] = $relationships;
         }
 
         return $object;
     }
 
-    public function getAndAssertStatus($url, $headers=[], $status=200)
+    public function getAndAssertStatus($url, $headers = [], $status = 200)
     {
         $response = $this->get($url, $headers);
         return $this->assertResponseStatus($response, $status);
     }
 
-    public function postAndAssertStatus($url, $data, $headers=[], $status=200)
+    public function postAndAssertStatus($url, $data, $headers = [], $status = 200)
     {
         $response = $this->post($url, $data, $headers);
         return $this->assertResponseStatus($response, $status);
     }
 
-    public function putAndAssertStatus($url, $data, $headers=[], $status=200)
+    public function putAndAssertStatus($url, $data, $headers = [], $status = 200)
     {
         $this->assertArrayHasKey('data', $data);
         $idObject = $data['data'];
@@ -63,28 +63,31 @@ class ApiTestCase extends TestCase
         return $this->assertResponseStatus($response, $status);
     }
 
-    public function deleteAndAssertStatus($url, $data, $headers=[], $status=200)
+    public function deleteAndAssertStatus($url, $data, $headers = [], $status = 200)
     {
-        $this->assertArrayHasKey('id', $data);
-        $url = $url . '/' . $data['id'];
-        $response = $this->delete($url, $data, $headers);
-        return $this->assertResponseStatus($response, $status);
+        $this->assertArrayHasKey('data', $data);
+        $idObject = $data['data'];
+        $this->assertArrayHasKey('id', $idObject);
+        $url = $url . $idObject['id'];
+
+        $response = $this->delete($url, $idObject, $headers);
+        return $this->assertResponseStatus($response, $status, ['meta']);
     }
 
-    public function assertResponseStatus($response, $status)
+    public function assertResponseStatus($response, $status, $availableDataKeys = ['data', 'links', 'meta'])
     {
-        if($response->getStatusCode() !== $status) {
-            print_r( $response->json() );
+        if ($response->getStatusCode() !== $status) {
+            print_r($response->json());
         }
 
         $response->assertStatus($status);
         $responseContent = $response->json();
 
-        if( $status === 200 ) {
-            $this->assertArrayHasKey('data', $responseContent);
-            $this->assertArrayHasKey('links', $responseContent);
-            $this->assertArrayHasKey('meta', $responseContent);
-        } else if( $status >= 400 ) {
+        if ($status === 200) {
+            forEach ($availableDataKeys as $dataKey) {
+                $this->assertArrayHasKey($dataKey, $responseContent);
+            }
+        } else if ($status >= 400) {
             $this->assertArrayHasKey('errors', $responseContent);
         }
 

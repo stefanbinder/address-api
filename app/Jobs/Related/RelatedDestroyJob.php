@@ -53,7 +53,7 @@ class RelatedDestroyJob implements ShouldQueue
             throw new NotFoundRelatedException($related, $this->id, $this->model::ID, $this->model->id);
         }
 
-        $destroyJob = ApiJobFactory::destroy($related);
+        $destroyJob = ApiJobFactory::destroy($relatedModel::ID);
         return $destroyJob::dispatchNow($relatedModel);
     }
 
