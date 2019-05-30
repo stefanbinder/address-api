@@ -7,17 +7,19 @@ use App\Models\Tag;
 
 class TagStoreJob extends StoreJob
 {
-
-    /**
-     * Execute the job.
-     */
-    public function handle()
+    protected function init()
     {
-        return $this->process();
+        $this->setApiModel( new Tag() );
     }
 
-    protected function getEloquent()
-    {
-        return Tag::class;
-    }
+//    protected function processAttributesBeforeCreate(array $attributes)
+//    {
+//        return $attributes;
+//    }
+
+//    protected function processModelAfterCreate( ApiModel $country )
+//    {
+//        return $country;
+//    }
+
 }

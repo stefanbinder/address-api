@@ -7,17 +7,19 @@ use App\Models\User\Person;
 
 class PersonStoreJob extends StoreJob
 {
-
-    /**
-     * Execute the job.
-     */
-    public function handle()
+    protected function init()
     {
-        return $this->process();
+        $this->setApiModel( new Person() );
     }
 
-    protected function getEloquent()
-    {
-        return Person::class;
-    }
+//    protected function processAttributesBeforeCreate(array $attributes)
+//    {
+//        return $attributes;
+//    }
+
+//    protected function processModelAfterCreate( ApiModel $country )
+//    {
+//        return $country;
+//    }
+
 }
