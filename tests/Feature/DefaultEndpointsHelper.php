@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Address\Country;
+use App\Models\ApiModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ApiTestCase;
 
@@ -14,6 +15,7 @@ abstract class DefaultEndpointsHelper extends ApiTestCase
     abstract public function assertAttributes($attributes, $testAttributes);
     abstract public function getModel();
     abstract public function getEndpoint();
+    abstract public function getRelationships(ApiModel $model);
 
     public function testIndex()
     {
@@ -37,7 +39,8 @@ abstract class DefaultEndpointsHelper extends ApiTestCase
     public function testStore()
     {
         $model = factory($this->getModel())->make();
-        $modelData = $this->createIdObject($model::ID, null, $model->getAttributes());
+        $modelData = $this->createIdObject($model::ID, null, $model->getAttributes(), $this->getRelationships($model));
+
         $response = $this->postAndAssertStatus($this->getEndpoint(), $modelData, [], 201);
         $this->assertModelIdentifierWithModelIdentifier($modelData['data'], $response['data']);
     }
@@ -47,7 +50,7 @@ abstract class DefaultEndpointsHelper extends ApiTestCase
         $model = factory($this->getModel())->create();
         $modelFaker = factory($this->getModel())->make();
 
-        $modelData = $this->createIdObject($model::ID, $model->id, $modelFaker->getAttributes());
+        $modelData = $this->createIdObject($model::ID, $model->id, $modelFaker->getAttributes(), $this->getRelationships($model));
         $response = $this->putAndAssertStatus($this->getEndpoint(), $modelData, [], 200);
         $this->assertModelIdentifierWithModelIdentifier($modelData['data'], $response['data']);
     }

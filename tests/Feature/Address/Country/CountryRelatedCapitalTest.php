@@ -1,24 +1,25 @@
 <?php
 
-namespace Tests\Feature\Address;
+namespace Tests\Feature\Address\Country;
 
+use App\Models\Address\City;
 use App\Models\Address\Country;
 use App\Models\Address\State;
-use App\Models\Address\Vendor;
-use App\Models\Tag;
+use App\Models\ApiModel;
+use App\Models\User;
+use App\Models\User\Person;
 use Tests\Feature\RelatedEndpointsHelper;
 
-class CountryRelatedTagTest extends RelatedEndpointsHelper
+class CountryRelatedCapitalTest extends RelatedEndpointsHelper
 {
 
-    /**
-     * @var Country
-     */
     protected $country;
+    protected $president;
 
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->country = factory(Country::class)->create();
     }
 
@@ -29,18 +30,22 @@ class CountryRelatedTagTest extends RelatedEndpointsHelper
 
     public function getModel()
     {
-        return Tag::class;
+        return City::class;
     }
 
     public function getEndpoint()
     {
-        return '/api/countries/' . $this->country->id . '/tags/';
+        return '/api/countries/' . $this->country->id . '/capital/';
     }
 
     public function getFactory($factoryMethod = 'create')
     {
-        $vendor = factory(Tag::class)->$factoryMethod();
-        $this->country->tags()->attach($vendor->id);
-        return $vendor;
+        return factory(City::class)->$factoryMethod();
     }
+
+    public function getRelationships(ApiModel $model)
+    {
+        return [];
+    }
+
 }

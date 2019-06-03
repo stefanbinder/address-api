@@ -3,6 +3,12 @@
 namespace App\Http\Requests\Api;
 
 use App\Exceptions\Api\NotImplementedException;
+use App\Http\Requests\Api\City\CityDestroyRequest;
+use App\Http\Requests\Api\City\CityIndexRequest;
+use App\Http\Requests\Api\City\CityRules;
+use App\Http\Requests\Api\City\CityShowRequest;
+use App\Http\Requests\Api\City\CityStoreRequest;
+use App\Http\Requests\Api\City\CityUpdateRequest;
 use App\Http\Requests\Api\Country\CountryDestroyRequest;
 use App\Http\Requests\Api\Country\CountryIndexRequest;
 use App\Http\Requests\Api\Country\CountryRules;
@@ -21,6 +27,12 @@ use App\Http\Requests\Api\Person\PersonRules;
 use App\Http\Requests\Api\Person\PersonShowRequest;
 use App\Http\Requests\Api\Person\PersonStoreRequest;
 use App\Http\Requests\Api\Person\PersonUpdateRequest;
+use App\Http\Requests\Api\Region\RegionDestroyRequest;
+use App\Http\Requests\Api\Region\RegionIndexRequest;
+use App\Http\Requests\Api\Region\RegionRules;
+use App\Http\Requests\Api\Region\RegionShowRequest;
+use App\Http\Requests\Api\Region\RegionStoreRequest;
+use App\Http\Requests\Api\Region\RegionUpdateRequest;
 use App\Http\Requests\Api\State\StateDestroyRequest;
 use App\Http\Requests\Api\State\StateIndexRequest;
 use App\Http\Requests\Api\State\StateRules;
@@ -64,6 +76,10 @@ class ApiRequestFactory
                 return StateIndexRequest::class;
             case 'people':
                 return PersonIndexRequest::class;
+            case 'cities':
+                return CityIndexRequest::class;
+            case 'regions':
+                return RegionIndexRequest::class;
             case 'vendors':
                 return VendorIndexRequest::class;
             case 'tags':
@@ -91,6 +107,10 @@ class ApiRequestFactory
                 return StateShowRequest::class;
             case 'people':
                 return PersonShowRequest::class;
+            case 'cities':
+                return CityShowRequest::class;
+            case 'regions':
+                return RegionShowRequest::class;
             case 'vendors':
                 return VendorShowRequest::class;
             case 'tags':
@@ -118,6 +138,10 @@ class ApiRequestFactory
                 return StateStoreRequest::class;
             case 'people':
                 return PersonStoreRequest::class;
+            case 'cities':
+                return CityStoreRequest::class;
+            case 'regions':
+                return RegionStoreRequest::class;
             case 'vendors':
                 return VendorStoreRequest::class;
             case 'tags':
@@ -145,6 +169,10 @@ class ApiRequestFactory
                 return StateUpdateRequest::class;
             case 'people':
                 return PersonUpdateRequest::class;
+            case 'cities':
+                return CityUpdateRequest::class;
+            case 'regions':
+                return RegionUpdateRequest::class;
             case 'vendors':
                 return VendorUpdateRequest::class;
             case 'tags':
@@ -172,6 +200,10 @@ class ApiRequestFactory
                 return StateDestroyRequest::class;
             case 'people':
                 return PersonDestroyRequest::class;
+            case 'cities':
+                return CityDestroyRequest::class;
+            case 'regions':
+                return RegionDestroyRequest::class;
             case 'vendors':
                 return VendorDestroyRequest::class;
             case 'tags':
@@ -199,6 +231,10 @@ class ApiRequestFactory
                 return StateRules::class;
             case 'people':
                 return PersonRules::class;
+            case 'cities':
+                return CityRules::class;
+            case 'regions':
+                return RegionRules::class;
             case 'vendors':
                 return VendorRules::class;
             case 'tags':

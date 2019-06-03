@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Address\City;
 use App\Models\Address\Country;
-use App\Models\Address\State;
 use Faker\Generator as Faker;
 
-$factory->define(State::class, function (Faker $faker) {
+$factory->define(City::class, function (Faker $faker) {
 
     $countries = Country::all();
 
@@ -14,6 +14,7 @@ $factory->define(State::class, function (Faker $faker) {
 
     return [
         'name' => $faker->name,
-        'country_id' => $countries->random()->id,
+        'country_id' => $countries->random()->id
     ];
+
 });

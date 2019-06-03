@@ -3,12 +3,16 @@
 namespace App\Http\Resources;
 
 use App\Exceptions\Api\NotImplementedException;
+use App\Http\Resources\City\CitiesResource;
+use App\Http\Resources\City\CityResource;
 use App\Http\Resources\Country\CountriesResource;
 use App\Http\Resources\Country\CountryResource;
 use App\Http\Resources\MediaObject\MediaObjectResource;
 use App\Http\Resources\MediaObject\MediaObjectsResource;
 use App\Http\Resources\Person\PeopleResource;
 use App\Http\Resources\Person\PersonResource;
+use App\Http\Resources\Region\RegionResource;
+use App\Http\Resources\Region\RegionsResource;
 use App\Http\Resources\State\StateResource;
 use App\Http\Resources\State\StatesResource;
 use App\Http\Resources\Tag\TagResource;
@@ -40,6 +44,12 @@ class ApiResourceFactory
             case 'state':
             case 'states':
                 return new StateResource($model);
+            case 'city':
+            case 'cities':
+                return new CityResource($model);
+            case 'region':
+            case 'regions':
+                return new RegionResource($model);
             case 'person':
             case 'people':
                 return new PersonResource($model);
@@ -72,6 +82,12 @@ class ApiResourceFactory
             case 'state':
             case 'states':
                 return new StatesResource($collection);
+            case 'city':
+            case 'cities':
+                return new CitiesResource($collection);
+            case 'region':
+            case 'regions':
+                return new RegionsResource($collection);
             case 'person':
             case 'people':
                 return new PeopleResource($collection);

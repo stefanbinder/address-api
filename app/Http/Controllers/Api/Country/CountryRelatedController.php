@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Country;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Api\Country\CountryIndexRequest;
+use App\Http\Requests\Api\City\CityIndexRequest;
 use App\Http\Resources\ApiResourceFactory;
 use App\Jobs\Related\RelatedDestroyJob;
 use App\Jobs\Related\RelatedShowJob;
@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 class CountryRelatedController extends ApiController
 {
 
-    public function index(CountryIndexRequest $request, Country $country, $related)
+    public function index(CityIndexRequest $request, Country $country, $related)
     {
         // RelatedIndexJob already sends Resource back (single or collection) depending on relationship
         $resource = RelatedIndexJob::dispatchNow($request->all(), $country, $related);

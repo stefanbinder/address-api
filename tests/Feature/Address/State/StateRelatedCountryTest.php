@@ -3,22 +3,22 @@
 namespace Tests\Feature\Address;
 
 use App\Models\Address\Country;
+use App\Models\Address\State;
 use App\Models\ApiModel;
-use App\Models\Tag;
 use Tests\Feature\RelatedEndpointsHelper;
 
-class TagRelatedCountryTest extends RelatedEndpointsHelper
+class StateRelatedCountryTest extends RelatedEndpointsHelper
 {
 
     /**
-     * @var Tag
+     * @var State
      */
-    protected $tag;
+    protected $state;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tag = factory(Tag::class)->create();
+        $this->state = factory(State::class)->create();
     }
 
     public function assertAttributes($attributes, $testAttributes)
@@ -35,13 +35,14 @@ class TagRelatedCountryTest extends RelatedEndpointsHelper
 
     public function getEndpoint()
     {
-        return '/api/tags/' . $this->tag->id . '/countries/';
+        return '/api/states/' . $this->state->id . '/country/';
     }
 
     public function getFactory($factoryMethod = 'create')
     {
         $country = factory(Country::class)->$factoryMethod();
-        $this->tag->countries()->attach($country->id);
+        $this->state->country_id = $country->id;
+        $this->state->push();
         return $country;
     }
 

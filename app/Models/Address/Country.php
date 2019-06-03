@@ -16,54 +16,55 @@ class Country extends ApiModel
         'created_at',
         'updated_at',
         'deleted_at',
-        'founded_at',
-        'last_visited',
     ];
 
     protected $fillable = [
         'name',
-        'code',
-        'inhabitants',
-        'founded_at',
-        'last_visited',
-        'president_id'
+        'code2',
+        'code3',
+        'capital_id',
+        'region_id',
     ];
 
     const FILTERABLE = [
-        'id',
         'name',
-        'code',
-        'inhabitants'
+        'code2',
+        'code3',
+        'capital_id',
+        'region_id',
     ];
 
     const SEARCHABLE = [
     ];
 
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function states()
     {
         return $this->hasMany(State::class);
     }
 
-    public function president()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function capital()
     {
-        return $this->belongsTo(Person::class, 'president_id', 'id');
+        return $this->hasOne(City::class);
     }
 
-    public function vendors()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function region()
     {
-        return $this->belongsToMany(Vendor::class);
+        return $this->belongsTo(Region::class);
     }
 
-    public function flag()
-    {
-        return $this->morphOne(MediaObject::class, 'media_objectable')->wherePivot('flag');
-    }
-
-    public function images()
-    {
-        return $this->morphMany(MediaObject::class, 'media_objectable')->wherePivot('images');
-    }
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
     public function tags()
     {
         return $this->morphToMany(Tag::class, 'tagable');

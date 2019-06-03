@@ -14,21 +14,18 @@ class CreateCountriesTable extends Migration
 
     public function up()
     {
-    
+
         Schema::create('countries',   function (Blueprint $table) {
         
             $table->increments("id");
             $table->timestampsTz();
             $table->softDeletesTz();
             $table->string('name');
-            $table->string('code');
-            $table->float('inhabitants')->nullable();
-            $table->date('founded_at')->nullable();
-            $table->timeTz('some_time')->nullable();
-            $table->dateTimeTz('last_visited')->nullable();
+            $table->string('code2');
+            $table->string('code3');
 
-            $table->integer('president_id')->nullable();
-
+            $table->integer('capital_id')->nullable();
+            $table->integer('region_id')->nullable();
         });
     }
     

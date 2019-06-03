@@ -3,6 +3,10 @@
 namespace App\Jobs\Api;
 
 use App\Exceptions\Api\NotImplementedException;
+use App\Jobs\Api\City\CityDestroyJob;
+use App\Jobs\Api\City\CityIndexJob;
+use App\Jobs\Api\City\CityStoreJob;
+use App\Jobs\Api\City\CityUpdateJob;
 use App\Jobs\Api\Country\CountryDestroyJob;
 use App\Jobs\Api\Country\CountryIndexJob;
 use App\Jobs\Api\Country\CountryStoreJob;
@@ -15,6 +19,10 @@ use App\Jobs\Api\Person\PersonDestroyJob;
 use App\Jobs\Api\Person\PersonIndexJob;
 use App\Jobs\Api\Person\PersonStoreJob;
 use App\Jobs\Api\Person\PersonUpdateJob;
+use App\Jobs\Api\Region\RegionDestroyJob;
+use App\Jobs\Api\Region\RegionIndexJob;
+use App\Jobs\Api\Region\RegionStoreJob;
+use App\Jobs\Api\Region\RegionUpdateJob;
 use App\Jobs\Api\State\StateDestroyJob;
 use App\Jobs\Api\State\StateIndexJob;
 use App\Jobs\Api\State\StateStoreJob;
@@ -46,6 +54,10 @@ class ApiJobFactory
                 return CountryIndexJob::dispatchNow($data, $query);
             case 'states':
                 return StateIndexJob::dispatchNow($data, $query);
+            case 'cities':
+                return CityIndexJob::dispatchNow($data, $query);
+            case 'regions':
+                return RegionIndexJob::dispatchNow($data, $query);
             case 'people':
                 return PersonIndexJob::dispatchNow($data, $query);
             case 'vendors':
@@ -58,24 +70,6 @@ class ApiJobFactory
                 throw new NotImplementedException("IndexJob for '$resourceIdentifier' is not defined in ApiJobFactory");
         }
     }
-
-    /**
-     * @param $resourceIdentifier
-     * @return mixed
-     * @throws NotImplementedException
-     */
-//    public static function show($resourceIdentifier)
-//    {
-//
-//        switch($resourceIdentifier) {
-//            case 'countries': return self::make(CountryShowJob::class);
-//            case 'states': return self::make(StateShowJob::class);
-//            case 'people': return self::make(PersonShowJob::class);
-//            default:
-//                throw new NotImplementedException("ShowJob for '$resourceIdentifier' is not defined in ApiJobFactory");
-//        }
-//
-//    }
 
     /**
      * @param $resourceIdentifier
@@ -93,6 +87,12 @@ class ApiJobFactory
             case 'states':
             case 'state':
                 return StateStoreJob::dispatchNow($request_data);
+            case 'city':
+            case 'cities':
+                return CityStoreJob::dispatchNow($request_data);
+            case 'region':
+            case 'regions':
+                return RegionStoreJob::dispatchNow($request_data);
             case 'people':
             case 'person':
                 return PersonStoreJob::dispatchNow($request_data);
@@ -124,6 +124,10 @@ class ApiJobFactory
                 return CountryUpdateJob::class;
             case 'states':
                 return StateUpdateJob::class;
+            case 'cities':
+                return CityUpdateJob::class;
+            case 'regions':
+                return RegionUpdateJob::class;
             case 'people':
                 return PersonUpdateJob::class;
             case 'vendors':
@@ -151,6 +155,10 @@ class ApiJobFactory
                 return CountryDestroyJob::class;
             case 'states':
                 return StateDestroyJob::class;
+            case 'cities':
+                return CityDestroyJob::class;
+            case 'regions':
+                return RegionDestroyJob::class;
             case 'people':
                 return PersonDestroyJob::class;
             case 'vendors':

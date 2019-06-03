@@ -23,7 +23,8 @@ Route::post('register', 'Api\AuthenticationController@register');
 
 build_basic_api_routes('country');
 build_basic_api_routes('state');
+build_basic_api_routes('city');
+build_basic_api_routes('region');
 build_basic_api_routes('person');
 build_basic_api_routes('tag');
 build_basic_api_routes('mediaObject');
-build_basic_api_routes('vendor');

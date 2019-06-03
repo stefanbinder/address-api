@@ -366,7 +366,6 @@ class ProcessRelations
         if( ! is_identifier_object($resourceData) ) {
             throw new ResourceObjectTypeError('is empty, ', null);
         }
-
         $id   = $resourceData['data']['id'] ?? null;
         $type = $resourceData['data']['type'];
 

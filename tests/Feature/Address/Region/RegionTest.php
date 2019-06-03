@@ -1,11 +1,12 @@
 <?php
 
-namespace Tests\Feature\Address;
+namespace Tests\Feature\Address\Region;
 
-use App\Models\Address\State;
+use App\Models\Address\Region;
+use App\Models\ApiModel;
 use Tests\Feature\DefaultEndpointsHelper;
 
-class StateTest extends DefaultEndpointsHelper
+class RegionTest extends DefaultEndpointsHelper
 {
     public function assertAttributes($attributes, $testAttributes)
     {
@@ -14,11 +15,16 @@ class StateTest extends DefaultEndpointsHelper
 
     public function getModel()
     {
-        return State::class;
+        return Region::class;
     }
 
     public function getEndpoint()
     {
-        return '/api/states/';
+        return '/api/regions/';
+    }
+
+    public function getRelationships(ApiModel $model)
+    {
+        return [];
     }
 }

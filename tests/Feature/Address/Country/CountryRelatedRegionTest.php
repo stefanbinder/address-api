@@ -1,13 +1,15 @@
 <?php
 
-namespace Tests\Feature\Address;
+namespace Tests\Feature\Address\Country;
 
 use App\Models\Address\Country;
+use App\Models\Address\Region;
 use App\Models\Address\State;
 use App\Models\Address\Vendor;
+use App\Models\ApiModel;
 use Tests\Feature\RelatedEndpointsHelper;
 
-class CountryRelatedVendorTest extends RelatedEndpointsHelper
+class CountryRelatedRegionTest extends RelatedEndpointsHelper
 {
 
     protected $country;
@@ -25,18 +27,21 @@ class CountryRelatedVendorTest extends RelatedEndpointsHelper
 
     public function getModel()
     {
-        return Vendor::class;
+        return Region::class;
     }
 
     public function getEndpoint()
     {
-        return '/api/countries/' . $this->country->id . '/vendors/';
+        return '/api/countries/' . $this->country->id . '/region/';
     }
 
     public function getFactory($factoryMethod = 'create')
     {
-        $vendor = factory(Vendor::class)->$factoryMethod();
-        $this->country->vendors()->attach($vendor->id);
-        return $vendor;
+        return factory(Region::class)->$factoryMethod();
+    }
+
+    public function getRelationships(ApiModel $model)
+    {
+        return [];
     }
 }

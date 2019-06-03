@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Address;
+namespace Tests\Feature\Address\City;
 
-use App\Models\Address\Country;
-use App\Models\Address\Vendor;
+use App\Models\Address\City;
+use App\Models\ApiModel;
 use Tests\Feature\DefaultEndpointsHelper;
 
-class VendorTest extends DefaultEndpointsHelper
+class CityTest extends DefaultEndpointsHelper
 {
     public function assertAttributes($attributes, $testAttributes)
     {
@@ -15,11 +15,16 @@ class VendorTest extends DefaultEndpointsHelper
 
     public function getModel()
     {
-        return Vendor::class;
+        return City::class;
     }
 
     public function getEndpoint()
     {
-        return '/api/vendors/';
+        return '/api/cities/';
+    }
+
+    public function getRelationships(ApiModel $model)
+    {
+        return [];
     }
 }

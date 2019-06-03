@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Address\Country;
+use App\Models\ApiModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\ApiTestCase;
 
@@ -15,17 +16,19 @@ abstract class RelatedEndpointsHelper extends ApiTestCase
     abstract public function getModel();
     abstract public function getFactory($factoryMethod='create');
     abstract public function getEndpoint();
+    abstract public function getRelationships(ApiModel $model);
 
     public function testIntegration()
     {
-
 
         /**
          *  1. STORE / CREATE
          */
 
         $model = $this->getFactory('make');
-        $modelData = $this->createIdObject($model::ID, null, $model->getAttributes());
+
+        $modelData = $this->createIdObject($model::ID, null, $model->getAttributes(), $this->getRelationships($model));
+
         $response = $this->postAndAssertStatus($this->getEndpoint(), $modelData, [], 201);
         $this->assertModelIdentifierWithModelIdentifier($modelData['data'], $response['data']);
 
@@ -65,7 +68,7 @@ abstract class RelatedEndpointsHelper extends ApiTestCase
 
         $modelFaker = factory($this->getModel())->make();
 
-        $modelData = $this->createIdObject($model::ID, $relatedModelId['id'], $modelFaker->getAttributes());
+        $modelData = $this->createIdObject($model::ID, $relatedModelId['id'], $modelFaker->getAttributes(), $this->getRelationships($model));
         $response = $this->putAndAssertStatus($this->getEndpoint(), $modelData, [], 200);
         $this->assertModelIdentifierWithModelIdentifier($modelData['data'], $response['data']);
 

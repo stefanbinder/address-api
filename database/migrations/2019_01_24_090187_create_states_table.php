@@ -16,13 +16,17 @@ class CreateStatesTable extends Migration
     {
     
         Schema::create('states',   function (Blueprint $table) {
-        
+
             $table->increments("id");
             $table->timestampsTz();
             $table->softDeletesTz();
+
             $table->string('name');
+            $table->string('code')->nullable();
+            $table->string('subdivision')->nullable();
+
             $table->integer('country_id')->nullable();
-            
+
         });
     }
     

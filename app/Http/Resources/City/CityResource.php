@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Resources\Country;
+namespace App\Http\Resources\City;
 
 use App\Http\Resources\ResourceObject;
 use App\Jobs\Related\RelatedIndexJob;
+use App\Models\Address\City;
 use App\Models\Address\Country;
 
-class CountryResource extends ResourceObject
+class CityResource extends ResourceObject
 {
 
     public function get_model()
     {
-        return Country::class;
+        return City::class;
     }
 
     protected function get_default_fields()
@@ -23,8 +24,7 @@ class CountryResource extends ResourceObject
     {
         return [
             'name',
-            'code2',
-            'code3',
+            'type',
             'created_at',
             'updated_at',
         ];
@@ -33,10 +33,8 @@ class CountryResource extends ResourceObject
     protected function get_relationships()
     {
         return [
-            'region',
-            'states',
-            'capital',
-            'tags',
+            'country',
+            'state',
         ];
     }
 
@@ -50,14 +48,9 @@ class CountryResource extends ResourceObject
         return $this->name;
     }
 
-    public function code2()
+    public function type()
     {
-        return $this->code2;
-    }
-
-    public function code3()
-    {
-        return $this->code3;
+        return $this->type;
     }
 
     public function created_at()

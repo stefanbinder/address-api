@@ -3,6 +3,7 @@
 namespace Tests\Feature\Address;
 
 use App\Models\Address\Country;
+use App\Models\ApiModel;
 use App\Models\Tag;
 use Tests\Feature\DefaultEndpointsHelper;
 
@@ -22,4 +23,10 @@ class TagTest extends DefaultEndpointsHelper
     {
         return '/api/tags/';
     }
+
+    public function getRelationships(ApiModel $model)
+    {
+        return [];
+    }
+
 }
